@@ -4,7 +4,8 @@ We'd love to accept your patches and contributions to this project.
 
 ## Bug Reports
 
-Please use GitHub Issues. For bugs relating to Privacy Sandbox on Android
+Please use GitHub Issues with details on which API you're using (e.g. Topics) as
+well as the OS version. For bugs relating to Privacy Sandbox on Android
 itself (not these developer tools) file bugs on [Issue Tracker](
 https://issuetracker.google.com/issues/new?component=1116743&template=1629474). 
 
