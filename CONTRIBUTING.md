@@ -2,6 +2,12 @@
 
 We'd love to accept your patches and contributions to this project.
 
+## Bug Reports
+
+Please use GitHub Issues. For bugs relating to Privacy Sandbox on Android
+itself (not these developer tools) file bugs on [Issue Tracker](
+https://issuetracker.google.com/issues/new?component=1116743&template=1629474). 
+
 ## Contributor License Agreement
 
 Contributions to this project must be accompanied by a Contributor License
