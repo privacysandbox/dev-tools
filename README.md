@@ -1,8 +1,12 @@
 # Privacy Sandbox on Android developer tools
-This repo holds developer tools for [Privacy Sandbox on Android](https://privacysandbox.com/android). The goal is to share tooling for ad tech develpers to enjoy a great developer experience when developing for Privacy Sandbox on Android.
+This repo holds developer tools for [Privacy Sandbox on Android](https://privacysandbox.com/android). The goal is to build tooling for ad tech develpers to enjoy a great developer experience when developing for Privacy Sandbox on Android.
 <p align="center">
 <img src="https://user-images.githubusercontent.com/6587742/224488460-4c1af1fe-4fe9-494c-9bb8-fc1f8c5aef58.svg" height="300">
 </p>
+
+## Documentation
+* See our documentation on [Android Developers](https://developer.android.com/design-for-safety/privacy-sandbox).
+* Not a developer? Learn more about Privacy Sandbox on Android [here](http://privacysandbox.com/android).
 
 ## Contributing & Feedback
 Please contribute! 
