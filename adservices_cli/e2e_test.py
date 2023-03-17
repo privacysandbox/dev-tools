@@ -31,6 +31,18 @@ class AdservicesTest(absltest.TestCase):
     self.adb.shell.assert_called_once()
     self.assertIn('force-stop', cmd)
 
+  def test_enable(self):
+    self.adservices.enable()
+
+    self.adb.put_device_config.assert_called()
+    self.adb.setprop.assert_called()
+
+  def test_disable(self):
+    self.adservices.disable()
+
+    self.adb.put_device_config.assert_called()
+    self.adb.setprop.assert_called()
+
 
 if __name__ == '__main__':
   absltest.main()
