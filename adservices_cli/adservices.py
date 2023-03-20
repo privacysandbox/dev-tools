@@ -1,5 +1,4 @@
 """Command for interacting with adservices."""
-import webbrowser
 
 from google3.wireless.android.adservices.devtools.adservices_cli import adb
 
@@ -14,6 +13,32 @@ class AdServices:
       adb_client: adb.AdbClient,
   ):
     self.adb = adb_client
+
+  def status(self):
+    """Print details about running adservices.
+
+    This also queries for relevant device properties, such as the configuration
+    for the Privacy Sandbox feature flag and enrollment checks.
+    """
+    print(
+        "is adservices installed:"
+        f" {self.adb.is_package_installed(ADSERVICES_PACKAGE)}"
+    )
+    print(f"is running: {self.adb.is_process_running(ADSERVICES_PACKAGE)}")
+    print(f"apex version: {self.adb.get_package(ADSERVICES_PACKAGE)}")
+    build_date = self.adb.getprop("ro.bootimage.build.date")
+    print(f"build date: {build_date}")
+    print(f"is userdebug: {self.adb.is_userdebug()}")
+    for prop in [
+        "ro.bootimage.build.version.release_or_codename",
+        "debug.adservices.global_kill_switch",
+        "debug.adservices.fledge_custom_audience_service_kill_switch",
+        "debug.adservices.fledge_select_ads_kill_switch",
+    ]:
+      value = self.adb.getprop(prop)
+      if not value:
+        value = "unknown prop"
+      print(f"{prop}: {value}")
 
   def enable(
       self,
@@ -81,23 +106,6 @@ class AdServices:
     else:
       print("Success: adservices process is not running.")
 
-  def open_ui(self):
-    """Open Privacy Sandbox settings UI (includes consent screen)."""
-    self.adb.shell(
-        "am start -n"
-        f" {ADSERVICES_PACKAGE}/com.android.adservices.ui.settings.activities.AdServicesSettingsMainActivity"
-    )
-
-  def feedback(self):
-    """Open GitHub repo for giving feedback on this CLI."""
-    webbrowser.open("https://github.com/privacysandbox/dev-tools/issues/new")
-
-  def open_docs(self):
-    """Open developer docs for Privacy Sandbox on Android."""
-    webbrowser.open(
-        "https://developer.android.com/design-for-safety/privacy-sandbox"
-    )
-
   def _is_service_supported(self) -> bool:
     return (
         bool(self.adb.getprop("build.version.extensions.ad_services"))
@@ -109,12 +117,14 @@ class AdServices:
       enabled: bool,
       disable_flag_push: bool = False,
       override_consent: bool = False,
+      disable_enrollment_check: bool = False,
   ):
     """Set the adservices process and feature flags to enabled or not.
 
     Args:
       enabled: If true, disable all kill switches.
-      disable_flag_push: Disable remote feature flag pushes from Google.
+      disable_flag_push: If true, prevent remote flag pushes from being set.
+        Uses the test override to do this.
       override_consent: Override the consent switch on the Privacy Sandbox UI.
       disable_enrollment_check: Disable enrollment check for AdTechs.
     """
@@ -142,7 +152,7 @@ class AdServices:
     self.adb.put_device_config(
         "adservices",
         "disable_fledge_enrollment_check",
-        "true" if enabled else "false",
+        "true" if enabled and disable_enrollment_check else "false",
     )
     self.adb.put_device_config(
         "adservices",

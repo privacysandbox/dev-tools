@@ -43,6 +43,11 @@ class AdservicesTest(absltest.TestCase):
     self.adb.put_device_config.assert_called()
     self.adb.setprop.assert_called()
 
+  def test_status(self):
+    self.adservices.status()
+
+    self.adb.getprop.assert_called()
+
   def test_open_ui(self):
     self.adservices.open_ui()
 

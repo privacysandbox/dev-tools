@@ -64,6 +64,30 @@ class AdbClient:
     """
     return self._pidof(process) > -1
 
+  def is_userdebug(self) -> bool:
+    """Return true if device is a userdebug build.
+
+    Userdebug builds have a special property that allows us to inspect the SQL
+    database for adservices, as well as run root commands.
+
+    Returns:
+      true if device is a userdebug build.
+    """
+    if not self.is_root():
+      self.root()
+    return self.getprop("ro.product.build.type") == "userdebug"
+
+  def get_sdk_version(self) -> int:
+    """Get Android SDK version on running device.
+
+    Returns:
+      int representation of SDK version, or -1 if unknown.
+    """
+    version_str = self.getprop("ro.build.version.sdk")
+    if not version_str:
+      return -1
+    return int(version_str)
+
   def shell(self, command: str, silent: bool = False) -> str:
     """Run an arbitrary `adb shell` command.
 
