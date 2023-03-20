@@ -1,4 +1,5 @@
 """Command for interacting with adservices."""
+import webbrowser
 
 from google3.wireless.android.adservices.devtools.adservices_cli import adb
 
@@ -80,6 +81,29 @@ class AdServices:
     else:
       print("Success: adservices process is not running.")
 
+  def open_ui(self):
+    """Open Privacy Sandbox settings UI (includes consent screen)."""
+    self.adb.shell(
+        "am start -n"
+        f" {ADSERVICES_PACKAGE}/com.android.adservices.ui.settings.activities.AdServicesSettingsMainActivity"
+    )
+
+  def feedback(self):
+    """Open GitHub repo for giving feedback on this CLI."""
+    webbrowser.open("https://github.com/privacysandbox/dev-tools/issues/new")
+
+  def open_docs(self):
+    """Open developer docs for Privacy Sandbox on Android."""
+    webbrowser.open(
+        "https://developer.android.com/design-for-safety/privacy-sandbox"
+    )
+
+  def _is_service_supported(self) -> bool:
+    return (
+        bool(self.adb.getprop("build.version.extensions.ad_services"))
+        and self.adb.get_sdk_version() >= 33
+    )
+
   def _set_service_enabled(
       self,
       enabled: bool,
@@ -94,6 +118,14 @@ class AdServices:
       override_consent: Override the consent switch on the Privacy Sandbox UI.
       disable_enrollment_check: Disable enrollment check for AdTechs.
     """
+    sdk_version = self.adb.get_sdk_version()
+    is_root = self.adb.is_root()
+    if sdk_version >= 34 and not is_root:
+      print("Error: this command requires root in Android U+")
+      return
+    if not self._is_service_supported():
+      print("Warning: adservices is supported from 33-ext4+")
+
     for kill_switch in [
         "global_kill_switch",
         "fledge_custom_audience_service_kill_switch",

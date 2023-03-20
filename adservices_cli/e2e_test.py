@@ -43,6 +43,23 @@ class AdservicesTest(absltest.TestCase):
     self.adb.put_device_config.assert_called()
     self.adb.setprop.assert_called()
 
+  def test_open_ui(self):
+    self.adservices.open_ui()
+
+    self.adb.shell.assert_called_once()
+
+  @mock.patch('webbrowser.open', return_value=mock.MagicMock())
+  def test_open_docs_calls_webbrowser(self, webbrowser_open_mock):
+    self.adservices.open_docs()
+
+    webbrowser_open_mock.assert_called_once()
+
+  @mock.patch('webbrowser.open', return_value=mock.MagicMock())
+  def test_open_feedback_calls_webbrowser(self, webbrowser_open_mock):
+    self.adservices.feedback()
+
+    webbrowser_open_mock.assert_called_once()
+
 
 if __name__ == '__main__':
   absltest.main()
