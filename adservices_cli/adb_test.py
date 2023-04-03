@@ -2,7 +2,7 @@ from unittest import mock
 
 from absl.testing import absltest
 
-from google3.wireless.android.adservices.devtools.adservices_cli import adb
+import adb
 
 
 class AdbTest(absltest.TestCase):

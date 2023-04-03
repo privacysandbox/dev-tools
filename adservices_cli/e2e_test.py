@@ -2,8 +2,8 @@ from unittest import mock
 
 from absl.testing import absltest
 
-from google3.wireless.android.adservices.devtools.adservices_cli import adb
-from google3.wireless.android.adservices.devtools.adservices_cli import adservices
+import adb
+import adservices
 
 
 class AdservicesTest(absltest.TestCase):

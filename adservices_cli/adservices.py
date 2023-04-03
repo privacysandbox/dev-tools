@@ -1,6 +1,6 @@
 """Command for interacting with adservices."""
 
-from google3.wireless.android.adservices.devtools.adservices_cli import adb
+import adb
 
 ADSERVICES_PACKAGE = "com.google.android.adservices.api"
 
