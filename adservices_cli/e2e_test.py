@@ -13,9 +13,10 @@ class AdservicesTest(absltest.TestCase):
     self.adb = mock.create_autospec(adb.AdbClient)
     self.adservices = adservices.AdServices(self.adb)
 
-  def test_kill_with_root(self):
+    self.adb.get_sdk_version.return_value = 33
     self.adb.is_root.return_value = True
 
+  def test_kill_with_root(self):
     self.adservices.kill()
 
     cmd = self.adb.shell.call_args.args[0]
@@ -36,6 +37,15 @@ class AdservicesTest(absltest.TestCase):
 
     self.adb.put_device_config.assert_called()
     self.adb.setprop.assert_called()
+
+  def test_enable_without_root_android_34(self):
+    self.adb.is_root.return_value = False
+    self.adb.get_sdk_version.return_value = 34
+
+    self.adservices.enable()
+
+    self.adb.put_device_config.assert_not_called()
+    self.adb.setprop.assert_not_called()
 
   def test_disable(self):
     self.adservices.disable()
