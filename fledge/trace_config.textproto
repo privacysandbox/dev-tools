@@ -96,8 +96,7 @@ data_sources: {
     target_buffer: 2
     android_log_config: {
       filter_tags: "adservices"
-      filter_tags: "AdServicesFledgeClient"
-      filter_tags: "AdServices"
+      filter_tags: "adservices.fledge"
       filter_tags: "FledgeSample"
     }
   }
