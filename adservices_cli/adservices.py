@@ -1,8 +1,11 @@
 """Command for interacting with adservices."""
 
-import adb
+import webbrowser
 
-ADSERVICES_PACKAGE = "com.google.android.adservices.api"
+import adb
+import constants
+import custom_audience
+import device_utils
 
 
 class AdServices:
@@ -13,6 +16,7 @@ class AdServices:
       adb_client: adb.AdbClient,
   ):
     self.adb = adb_client
+    self.custom_audience = custom_audience.CustomAudience(adb_client)
 
   def status(self):
     """Print details about running adservices.
@@ -22,10 +26,13 @@ class AdServices:
     """
     print(
         "is adservices installed:"
-        f" {self.adb.is_package_installed(ADSERVICES_PACKAGE)}"
+        f" {self.adb.is_package_installed(constants.ADSERVICES_PACKAGE)}"
     )
-    print(f"is running: {self.adb.is_process_running(ADSERVICES_PACKAGE)}")
-    print(f"apex version: {self.adb.get_package(ADSERVICES_PACKAGE)}")
+    print(
+        "is running:"
+        f" {self.adb.is_process_running(constants.ADSERVICES_PACKAGE)}"
+    )
+    print(f"apex version: {self.adb.get_package(constants.ADSERVICES_PACKAGE)}")
     build_date = self.adb.getprop("ro.bootimage.build.date")
     print(f"build date: {build_date}")
     print(f"is userdebug: {self.adb.is_userdebug()}")
@@ -58,13 +65,13 @@ class AdServices:
       override_consent: Override the consent switch on the Privacy Sandbox UI.
       disable_enrollment_check: Disable enrollment check for AdTechs.
     """
-    if not self.adb.is_package_installed(ADSERVICES_PACKAGE):
+    if not self.adb.is_package_installed(constants.ADSERVICES_PACKAGE):
       print("Error: adservices module is not installed.")
     else:
       self._set_service_enabled(
           True, disable_flag_push, override_consent, disable_enrollment_check
       )
-      if not self.adb.is_process_running(ADSERVICES_PACKAGE):
+      if not self.adb.is_process_running(constants.ADSERVICES_PACKAGE):
         print("Error: adservices module is not running.")
 
   def disable(self):
@@ -73,7 +80,7 @@ class AdServices:
     This command is the inverse of the `enable` command. After disabling the
     feature flags the adservices process is then killed.
     """
-    if not self.adb.is_package_installed(ADSERVICES_PACKAGE):
+    if not self.adb.is_package_installed(constants.ADSERVICES_PACKAGE):
       print("Error: adservices module is not installed.")
     else:
       self._set_service_enabled(False)
@@ -90,27 +97,44 @@ class AdServices:
     running process.
     """
     if not self.adb.is_package_installed(
-        ADSERVICES_PACKAGE
-    ) or not self.adb.is_process_running(ADSERVICES_PACKAGE):
+        constants.ADSERVICES_PACKAGE
+    ) or not self.adb.is_process_running(constants.ADSERVICES_PACKAGE):
       print("Error: adservices module is not installed or running.")
       return
 
     if not self.adb.is_root():
-      self.adb.shell(f"am force-stop {ADSERVICES_PACKAGE}")
+      self.adb.shell(f"am force-stop {constants.ADSERVICES_PACKAGE}")
       print("Warning: not root, using `am force-stop` as fallback.")
     else:
-      self.adb.shell(f"su 0 killall -9 {ADSERVICES_PACKAGE}")
+      self.adb.shell(f"su 0 killall -9 {constants.ADSERVICES_PACKAGE}")
 
-    if self.adb.is_process_running(ADSERVICES_PACKAGE):
+    if self.adb.is_process_running(constants.ADSERVICES_PACKAGE):
       print("Error: adservices module is still running.")
     else:
       print("Success: adservices process is not running.")
 
+  def open_ui(self):
+    """Open Privacy Sandbox UI on connected device."""
+    self.adb.shell(
+        "am start -n"
+        f" {constants.ADSERVICES_PACKAGE}/.{constants.ADSERVICES_UI_ACTIVITY_NAME}"
+    )
+
+  def open_docs(self):
+    """Open Privacy Sandbox for Android documentation."""
+    webbrowser.open(constants.ADSERVICES_DOCS_URL)
+
+  def feedback(self):
+    """Open Privacy Sandbox for DevTools feedback page."""
+    webbrowser.open(constants.ADSERVICES_CLI_ISSUES_URL)
+
   def _is_service_supported(self) -> bool:
+    # TODO(b/328846161): Add support for ExtServices.
+    version_code = self.adb.get_sdk_version() >= 33
     return (
         bool(self.adb.getprop("build.version.extensions.ad_services"))
-        and self.adb.get_sdk_version() >= 33
-    )
+        and version_code >= 33
+    ) and not device_utils.is_extservices(version_code)
 
   def _set_service_enabled(
       self,
@@ -154,11 +178,16 @@ class AdServices:
         "disable_fledge_enrollment_check",
         "true" if enabled and disable_enrollment_check else "false",
     )
-    self.adb.put_device_config(
-        "adservices",
+    for feature_flag in [
         "adservice_system_service_enabled",
-        "true" if enabled else "false",
-    )
+        "adservices_shell_command_enabled",
+        "fledge_is_custom_audience_cli_enabled",
+    ]:
+      self.adb.put_device_config(
+          "adservices",
+          feature_flag,
+          "true" if enabled else "false",
+      )
 
     self.adb.set_sync_disabled_for_tests(
         "persistent" if enabled and disable_flag_push else "none",

@@ -3,6 +3,9 @@
 import subprocess
 
 
+_TIMEOUT_SEC = 5
+
+
 class AdbClient:
   """Client for interacting with ADB (Android Debug Bridge)."""
 
@@ -105,7 +108,10 @@ class AdbClient:
     if not silent:
       print(exec_command)
     result = subprocess.run(
-        exec_command.split(" "), capture_output=True, check=True
+        exec_command.split(" "),
+        capture_output=True,
+        check=True,
+        timeout=_TIMEOUT_SEC,
     )
     return result.stdout.decode("utf-8").strip("\n")
 
