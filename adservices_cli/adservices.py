@@ -192,9 +192,7 @@ class AdServices:
     self.adb.set_sync_disabled_for_tests(
         "persistent" if enabled and disable_flag_push else "none",
     )
-
-    self.adb.put_device_config(
-        "debug.adservices",
-        "consent_manager_debug_mode",
+    self.adb.setprop(
+        "debug.adservices.consent_manager_debug_mode",
         "true" if enabled and override_consent else "none",
     )
