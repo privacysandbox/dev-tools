@@ -13,6 +13,13 @@ developing for Privacy Sandbox on Android. <p align="center">
 *   Not a developer? Learn more about Privacy Sandbox on Android
     [here](http://privacysandbox.com/android).
 
+## AdServices CLI
+
+A developer tool for interacting with your test device when developing for
+Protected Audience and Protected App Signals.
+
+See the [README](./adservices_cli/README.md) for more details.
+
 ## Contributing & Feedback
 
 Please contribute!
