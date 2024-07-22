@@ -18,14 +18,14 @@ _TEST_CUSTOM_AUDIENCE_MODIFIED = {
     'field': 'modified_test_data',
 }
 
-_LIST_AUDIENCES_RESPONSE = json.dumps({'audiences': [_TEST_CUSTOM_AUDIENCE]})
-_LIST_AUDIENCES_RESPONSE_EMPTY = json.dumps({'audiences': []})
-_REFRESH_AUDIENCE_RESPONSE = json.dumps({})
-_GET_AUDIENCE_RESPONSE = json.dumps({'audiences': [_TEST_CUSTOM_AUDIENCE]})
-_GET_AUDIENCE_RESPONSE_MODIFIED = json.dumps(
-    {'audiences': [_TEST_CUSTOM_AUDIENCE_MODIFIED]}
-)
-_GET_AUDIENCE_RESPONSE_EMPTY = json.dumps({'audiences': []})
+_LIST_AUDIENCES_RESPONSE = {'audiences': [_TEST_CUSTOM_AUDIENCE]}
+_LIST_AUDIENCES_RESPONSE_EMPTY = {'audiences': []}
+_REFRESH_AUDIENCE_RESPONSE = {}
+_GET_AUDIENCE_RESPONSE = {'audiences': [_TEST_CUSTOM_AUDIENCE]}
+_GET_AUDIENCE_RESPONSE_MODIFIED = {
+    'audiences': [_TEST_CUSTOM_AUDIENCE_MODIFIED]
+}
+_GET_AUDIENCE_RESPONSE_EMPTY = {'audiences': []}
 
 
 _ARG_NAME = '--name'
@@ -107,7 +107,7 @@ class CustomAudienceTest(absltest.TestCase):
         ],
         self.adb.shell_calls[0],
     )
-    self.assertEqual(output, _LIST_AUDIENCES_RESPONSE)
+    self.assertEqual(json.loads(output), _LIST_AUDIENCES_RESPONSE)
 
   def test_list_audiences_empty_response(self):
     self.adb.set_shell_output(json.dumps(_LIST_AUDIENCES_RESPONSE_EMPTY))
@@ -118,7 +118,7 @@ class CustomAudienceTest(absltest.TestCase):
     )
 
     self.assertTrue(self.adb.shell_called)
-    self.assertEqual(output, _LIST_AUDIENCES_RESPONSE_EMPTY)
+    self.assertEqual(json.loads(output), _LIST_AUDIENCES_RESPONSE_EMPTY)
 
   def test_list_audiences_bad_adb_response(self):
     self.adb.set_shell_output('bad_response #%%@')
@@ -153,7 +153,7 @@ class CustomAudienceTest(absltest.TestCase):
         ],
         self.adb.shell_calls[0],
     )
-    self.assertEqual(output, _GET_AUDIENCE_RESPONSE)
+    self.assertEqual(json.loads(output), _GET_AUDIENCE_RESPONSE)
 
   def test_get_audiences_empty_response(self):
     self.adb.set_shell_output(json.dumps(_GET_AUDIENCE_RESPONSE_EMPTY))
@@ -165,7 +165,7 @@ class CustomAudienceTest(absltest.TestCase):
     )
 
     self.assertTrue(self.adb.shell_called)
-    self.assertEqual(output, _GET_AUDIENCE_RESPONSE_EMPTY)
+    self.assertEqual(json.loads(output), _GET_AUDIENCE_RESPONSE_EMPTY)
 
   def test_get_audiences_bad_adb_response(self):
     self.adb.set_shell_output('bad_response #%%@')
@@ -182,7 +182,7 @@ class CustomAudienceTest(absltest.TestCase):
     self.adb.set_shell_outputs([
         json.dumps(_GET_AUDIENCE_RESPONSE),
         json.dumps(_REFRESH_AUDIENCE_RESPONSE),
-        json.dumps(_GET_AUDIENCE_RESPONSE_MODIFIED),
+        json.dumps(json.dumps(_GET_AUDIENCE_RESPONSE_MODIFIED)),
     ])
 
     diffed_json = json.loads(
@@ -194,7 +194,7 @@ class CustomAudienceTest(absltest.TestCase):
     )
 
     self.assertEqual(
-        diffed_json['diff'],
+        diffed_json['updated_fields'],
         '{"audiences": [{"name": "test_custom_audience_name", "field":'
         ' "modified_test_data"}]}',
     )
