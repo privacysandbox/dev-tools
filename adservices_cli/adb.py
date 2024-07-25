@@ -9,10 +9,6 @@ _TIMEOUT_SEC = 5
 class AdbClient:
   """Client for interacting with ADB (Android Debug Bridge)."""
 
-  def __init__(self):
-    if not self.is_root():
-      self.root()
-
   def root(self):
     """Try elevate to root permissions.
 
@@ -39,10 +35,12 @@ class AdbClient:
       package info if currently installed, otherwise an empty string. Android
       package info format looks like "package:com.example versionCode:123".
     """
-    packages = self.shell("pm list packages --show-versioncode", silent=True)
+    packages = self.shell(
+        "pm list packages --apex-only --show-versioncode", silent=True
+    )
     for installed_package_info in packages.split("\n"):
       if package in installed_package_info:
-        return package
+        return installed_package_info
     return ""
 
   def is_package_installed(self, package: str) -> bool:
@@ -76,8 +74,6 @@ class AdbClient:
     Returns:
       true if device is a userdebug build.
     """
-    if not self.is_root():
-      self.root()
     return self.getprop("ro.product.build.type") == "userdebug"
 
   def get_sdk_version(self) -> int:

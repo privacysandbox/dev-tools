@@ -44,8 +44,8 @@ class AdservicesTest(absltest.TestCase):
 
     self.adservices.enable()
 
-    self.adb.put_device_config.assert_not_called()
-    self.adb.setprop.assert_not_called()
+    self.adb.put_device_config.assert_called()
+    self.adb.setprop.assert_called()
 
   def test_disable(self):
     self.adservices.disable()

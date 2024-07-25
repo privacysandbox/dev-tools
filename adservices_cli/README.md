@@ -7,10 +7,9 @@ Android.
 
 ### Workstation setup
 
-1.  Install dependencies with `pip3 -r requirements.txt`
-2.  Run `./adservices.py` to see help commands
-3.  Optionally add `alias=path/to/adservices.py` to your .bashrc
-4.  Run `python3 main.py` to see the help screen
+1.  Install dependencies with `pip3 install -r requirements.txt`
+2.  Optionally add `alias=path/to/main.py` to your .bashrc
+3.  Run `python3 main.py` to see the help screen
 
 ### Enable adservices shell commands
 
@@ -19,7 +18,11 @@ This tool interacts with the device by using low-level ADB commands part of the
 
 1.  Restart your device to kill the adservices process
 
-2.  Confirm that adservices is not running: `adb shell ps -A | grep adservices`
+2.  Confirm that adservices is not running:
+
+```
+adb shell ps -A | grep com.google.android.adservices.api
+```
 
 To enable adservices shell commands, run the following command:
 
@@ -56,7 +59,7 @@ via these commands if the following requirements are true:
 To view a specific custom audience, run the following command:
 
 ```
-python3 adservices_cli.py custom-audience list
+python3 main.py custom-audience list
   --owner-app-package <package> \
   --buyer <buyer>
 ```
@@ -70,7 +73,7 @@ audience command (see below).
 To view a specific custom audience, run the following command:
 
 ```
-python3 adservices_cli.py custom-audience get \
+python3 main.py custom-audience get \
   --name <name> \
   --owner-app-package <package> \
   --buyer <buyer>
@@ -82,7 +85,7 @@ To trigger daily update manually for a specific custom audience, run the
 following command:
 
 ```
-python3 adservices_cli.py custom-audience refresh
+python3 main.py custom-audience refresh
   --name <name> \
   --owner-app-package <package> \
   --buyer <buyer>
