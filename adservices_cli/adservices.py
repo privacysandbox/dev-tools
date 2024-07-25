@@ -2,6 +2,7 @@
 
 import webbrowser
 
+import ad_selection
 import adb
 import constants
 import custom_audience
@@ -17,6 +18,7 @@ class AdServices:
   ):
     self.adb = adb_client
     self.custom_audience = custom_audience.CustomAudience(adb_client)
+    self.ad_selection = ad_selection.AdSelection(adb_client)
 
   def status(self):
     """Print details about running adservices.

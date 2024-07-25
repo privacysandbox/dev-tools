@@ -172,6 +172,17 @@ class AdbClient:
       print("cannot setprop with empty value")
     self.shell(f"setprop {key} {value}")
 
+  def execute_adservices_shell_command(self, command: str) -> str:
+    """Executes the adservices shell command.
+
+    Args:
+      command: the complete command with arguments.
+
+    Returns:
+      the result of the command.
+    """
+    return self.shell(f"cmd adservices_manager {command}")
+
   def _pidof(self, process: str) -> int:
     try:
       pid = self.shell(f"pidof -s {process}", silent=True)

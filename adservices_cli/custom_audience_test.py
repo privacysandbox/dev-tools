@@ -2,8 +2,9 @@ import json
 
 from absl.testing import absltest
 
-import adb
 import custom_audience
+import fake_adb
+import utilities
 
 _TEST_NAME = 'test_name'
 _TEST_INSTALLED_OWNER_PACKAGE = 'com.example.test'
@@ -28,60 +29,11 @@ _GET_AUDIENCE_RESPONSE_MODIFIED = {
 _GET_AUDIENCE_RESPONSE_EMPTY = {'audiences': []}
 
 
-_ARG_NAME = '--name'
-_ARG_OWNER = '--owner'
-_ARG_BUYER = '--buyer'
-
-
-def _split_adb_command(command: str) -> list[str]:
-  return command.split(' ')
-
-
-class FakeAdb(adb.AdbClient):
-  """Fake ADB client for testing.
-
-  Shell calls are split apart into their base parts for assertions, for example
-  a call to FakeAdb.shell("hello --world") will result in ("hello", "--world")
-  being saved to the shell_calls field.
-
-  Not thread-safe.
-  """
-
-  def __init__(self):
-    """Initializes the fake ADB client."""
-    self._shell_outputs = ''
-    self.shell_calls = []
-
-  def set_shell_output(self, output: str) -> None:
-    """Sets the shell output."""
-    self.set_shell_outputs([output])
-
-  def set_shell_outputs(self, outputs: list[str]) -> None:
-    """Sets the shell output."""
-    self._shell_outputs = outputs
-
-  def reset(self) -> None:
-    self._shell_outputs = []
-    self.shell_calls = []
-
-  @property
-  def shell_called(self) -> bool:
-    return self.shell_calls
-
-  def shell(self, command: str, silent: bool = False) -> str:
-    output = self._shell_outputs.pop(0)
-    self.shell_calls.append(_split_adb_command(command))
-    return output
-
-  def is_package_installed(self, package: str) -> bool:
-    return package == _TEST_INSTALLED_OWNER_PACKAGE
-
-
 class CustomAudienceTest(absltest.TestCase):
 
   def setUp(self):
     super().setUp()
-    self.adb = FakeAdb()
+    self.adb = fake_adb.FakeAdb()
     self.custom_audience = custom_audience.CustomAudience(self.adb)
 
   def tearDown(self):
@@ -97,12 +49,12 @@ class CustomAudienceTest(absltest.TestCase):
     )
 
     self.assertContainsSubset(
-        _split_adb_command(custom_audience._COMMAND_PREFIX)
+        utilities.split_adb_command(custom_audience._COMMAND_PREFIX)
         + [
             custom_audience._LIST_COMMAND,
-            _ARG_OWNER,
+            custom_audience._ARG_OWNER,
             _TEST_INSTALLED_OWNER_PACKAGE,
-            _ARG_BUYER,
+            custom_audience._ARG_BUYER,
             _TEST_BUYER,
         ],
         self.adb.shell_calls[0],
@@ -141,14 +93,14 @@ class CustomAudienceTest(absltest.TestCase):
     )
 
     self.assertContainsSubset(
-        _split_adb_command(custom_audience._COMMAND_PREFIX)
+        utilities.split_adb_command(custom_audience._COMMAND_PREFIX)
         + [
             custom_audience._GET_COMMAND,
-            _ARG_OWNER,
+            custom_audience._ARG_OWNER,
             _TEST_INSTALLED_OWNER_PACKAGE,
-            _ARG_BUYER,
+            custom_audience._ARG_BUYER,
             _TEST_BUYER,
-            _ARG_NAME,
+            custom_audience._ARG_NAME,
             _TEST_NAME,
         ],
         self.adb.shell_calls[0],
@@ -198,12 +150,12 @@ class CustomAudienceTest(absltest.TestCase):
         '{"audiences": [{"name": "test_custom_audience_name", "field":'
         ' "modified_test_data"}]}',
     )
-    parts = _split_adb_command(custom_audience._COMMAND_PREFIX) + [
-        _ARG_OWNER,
+    parts = utilities.split_adb_command(custom_audience._COMMAND_PREFIX) + [
+        custom_audience._ARG_OWNER,
         _TEST_INSTALLED_OWNER_PACKAGE,
-        _ARG_BUYER,
+        custom_audience._ARG_BUYER,
         _TEST_BUYER,
-        _ARG_NAME,
+        custom_audience._ARG_NAME,
         _TEST_NAME,
     ]
     self.assertContainsSubset(

@@ -5,32 +5,20 @@ import json
 import jsondiff
 
 import adb
+import utilities
 
 
 ERROR_FAILED_TO_PARSE = "Failed to decode JSON response from device: "
 ERROR_NOT_FOUND = "Custom audience not found."
 
-_COMMAND_PREFIX = "cmd adservices_manager custom-audience"
+_COMMAND_PREFIX = "custom-audience"
 _GET_COMMAND = "view"
 _LIST_COMMAND = "list"
 _REFRESH_COMMAND = "refresh"
 
-
-def _make_command(command_name: str, **kwargs) -> str:
-  """Makes a command to run on the device.
-
-  Args:
-    command_name: Raw command name to execute.
-    **kwargs: --key=value arguments to be passed to the command.
-
-  Returns:
-    (str) formatted to run via ADB.
-  """
-  args = [_COMMAND_PREFIX, command_name]
-  for arg_name, arg_value in kwargs.items():
-    args.append("--" + arg_name)
-    args.append(arg_value)
-  return " ".join(args)
+_ARG_NAME = "--name"
+_ARG_OWNER = "--owner"
+_ARG_BUYER = "--buyer"
 
 
 class CustomAudience:
@@ -85,11 +73,15 @@ class CustomAudience:
     Returns:
       Textual output of custom audiences data.
     """
-    output = self._adb.shell(
-        _make_command(
+    output = self._adb.execute_adservices_shell_command(
+        utilities.format_command(
+            _COMMAND_PREFIX,
             _LIST_COMMAND,
-            owner=owner_app_package,
-            buyer=buyer,
+            "",
+            {
+                _ARG_OWNER: owner_app_package,
+                _ARG_BUYER: buyer,
+            },
         )
     )
     try:
@@ -119,12 +111,16 @@ class CustomAudience:
       )
       if not existing_custom_audience:
         return ERROR_NOT_FOUND
-      self._adb.shell(
-          _make_command(
+      self._adb.execute_adservices_shell_command(
+          utilities.format_command(
+              _COMMAND_PREFIX,
               _REFRESH_COMMAND,
-              name=name,
-              owner=owner_app_package,
-              buyer=buyer,
+              "",
+              {
+                  _ARG_NAME: name,
+                  _ARG_OWNER: owner_app_package,
+                  _ARG_BUYER: buyer,
+              },
           )
       )
       updated_custom_audience = json.loads(
@@ -149,11 +145,11 @@ class CustomAudience:
       owner_app_package: str,
       buyer: str,
   ) -> str:
-    return self._adb.shell(
-        _make_command(
+    return self._adb.execute_adservices_shell_command(
+        utilities.format_command(
+            _COMMAND_PREFIX,
             _GET_COMMAND,
-            name=name,
-            owner=owner_app_package,
-            buyer=buyer,
+            "",
+            {_ARG_NAME: name, _ARG_OWNER: owner_app_package, _ARG_BUYER: buyer},
         )
     )

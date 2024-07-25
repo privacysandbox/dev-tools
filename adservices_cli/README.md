@@ -59,7 +59,7 @@ via these commands if the following requirements are true:
 To view a specific custom audience, run the following command:
 
 ```
-python3 main.py custom-audience list
+python3 main.py custom-audience list \
   --owner-app-package <package> \
   --buyer <buyer>
 ```
@@ -85,7 +85,7 @@ To trigger daily update manually for a specific custom audience, run the
 following command:
 
 ```
-python3 main.py custom-audience refresh
+python3 main.py custom-audience refresh \
   --name <name> \
   --owner-app-package <package> \
   --buyer <buyer>
@@ -93,3 +93,37 @@ python3 main.py custom-audience refresh
 
 This command will show you a diff of the custom audience from before and after
 the refresh.
+
+## AdTech consented debugging
+
+AdTech consented debugging enables AdTechs to debug Protected Audiences APIs on
+Bidding and Auction Servers. More detail on how to setup AdTech consented
+debugging on B&A servers please refer to
+[this link](https://github.com/privacysandbox/protected-auction-services-docs/blob/main/debugging_protected_audience_api_services.md#adtech-consented-debugging).
+
+### Enable AdTech consented debugging
+
+To enable AdTech consented debugging on this device run the following command.
+
+```
+python3 main.py ad-selection enable-consented-debug \
+    --token <secret-debug-token> \
+    --expiry_in_hours <expiry in hours>
+```
+
+### Disable AdTech consented debugging
+
+To disable AdTech consented debugging on this device run the following command.
+
+```
+python3 main.py ad-selection disable-consented-debug
+```
+
+### View AdTech consented debugging
+
+To view AdTech consented debugging information on this device run the following
+command.
+
+```
+python3 main.py ad-selection view-consented-debug
+```
