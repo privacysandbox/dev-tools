@@ -24,6 +24,9 @@ _ENABLE_AD_RENDER_ID = "fledge_auction_server_ad_render_id_enabled"
 
 ### Protected app signals
 _ENABLE_PROTECTED_APP_SIGNALS = "protected_signals_enabled"
+_ENABLE_PROTECTED_APP_SIGNALS_ENCODING = (
+    "protected_signals_periodic_encoding_enabled"
+)
 
 ### Reporting
 _ENABLE_REPORT_EVENT_REGISTRATION = "fledge_register_ad_beacon_enabled"
@@ -34,6 +37,7 @@ FEATURE_FLAGS = [
     _ENABLE_AD_RENDER_ID,
     _ENABLE_FREQUENCEY_FILTER,
     _ENABLE_PROTECTED_APP_SIGNALS,
+    _ENABLE_PROTECTED_APP_SIGNALS_ENCODING,
     _ENABLE_REPORT_EVENT_REGISTRATION,
 ]
 

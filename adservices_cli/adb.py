@@ -105,9 +105,13 @@ class AdbClient:
     result = subprocess.run(
         exec_command.split(" "),
         capture_output=True,
-        check=True,
+        check=False,
         timeout=_TIMEOUT_SEC,
     )
+    if result.stderr:
+      if not silent:
+        print(f"Error occurred while running {exec_command}")
+      return result.stderr.decode("utf-8").strip("\n")
     return result.stdout.decode("utf-8").strip("\n")
 
   def set_sync_disabled_for_tests(self, value: str):
@@ -209,6 +213,18 @@ class AdbClient:
     if not value:
       print("cannot setprop with empty value")
     self.shell(f"setprop {key} {value}", silent)
+
+  def run_scheduled_background_job(self, namespace: str, job_id: int):
+    """Force runs a scheduled background job.
+
+    Args:
+      namespace: the namespace of the background job.
+      job_id: the identifier of the background job.
+
+    Returns:
+      Textual output of the command execution
+    """
+    return self.shell(f"cmd jobscheduler run -f {namespace} {job_id}")
 
   def _pidof(self, process: str) -> int:
     try:

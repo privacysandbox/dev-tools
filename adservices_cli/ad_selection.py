@@ -5,10 +5,6 @@ import json
 import adb
 import utilities
 
-
-ERROR_FAILED_TO_PARSE = "Failed to decode JSON response from device: "
-ERROR_NOT_FOUND = "Custom audience not found."
-
 _COMMAND_PREFIX = "ad-selection"
 _CONSENTED_DEBUG_COMMAND = "consented-debug"
 _CONSENTED_DEBUG_COMMAND_ENABLE = "enable"
@@ -19,7 +15,14 @@ _CONSENTED_DEBUG_COMMAND_VIEW = "view"
 
 
 class AdSelection:
-  """Interact with Ad Selection."""
+  """Interact with Ad Selection.
+
+  Overview:
+  https://developers.google.com/privacy-sandbox/relevance/protected-audience/android#ad-selection
+
+  Bidding and Auction Servers Overview:
+  https://developers.google.com/privacy-sandbox/relevance/protected-audience/android/bidding-and-auction-services
+  """
 
   def __init__(
       self,

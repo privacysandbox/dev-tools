@@ -4,6 +4,8 @@ import webbrowser
 
 import ad_selection
 import adb
+import app_signals
+import constants
 import custom_audience
 import device_utils
 import flag_constants
@@ -15,7 +17,6 @@ class AdServices:
   _ADSERVICES_SYSTEM_PROPERTIES_NAMESPACE = "debug.adservices"
   _ADSERVICES_DEVICE_CONFIG_NAMESPACE = "adservices"
   _ADSERVICES_PACKAGE = "com.google.android.adservices"
-  _ADSERVICES_API_PACKAGE = "com.google.android.adservices.api"
   _ADSERVICES_DOCS_URL = (
       "https://developer.android.com/design-for-safety/privacy-sandbox"
   )
@@ -31,6 +32,7 @@ class AdServices:
     self.adb = adb_client
     self.custom_audience = custom_audience.CustomAudience(adb_client)
     self.ad_selection = ad_selection.AdSelection(adb_client)
+    self.app_signals = app_signals.AppSignals(adb_client)
 
   def status(self):
     """Print details about running adservices.
@@ -118,7 +120,7 @@ class AdServices:
       print("Cannot kill adservice process. Module is not running.")
       return
 
-    self.adb.shell(f"am force-stop {self._ADSERVICES_API_PACKAGE}")
+    self.adb.shell(f"am force-stop {constants.ADSERVICES_API_PACKAGE}")
 
     if self._is_adservices_running():
       print("Error: adservices module is still running.")
@@ -129,7 +131,7 @@ class AdServices:
     """Open Privacy Sandbox UI on connected device."""
     self.adb.shell(
         "am start -n"
-        f" {self._ADSERVICES_API_PACKAGE}/{self._ADSERVICES_UI_ACTIVITY_NAME}"
+        f" {constants.ADSERVICES_API_PACKAGE}/{self._ADSERVICES_UI_ACTIVITY_NAME}"
     )
 
   def open_docs(self):
@@ -226,4 +228,4 @@ class AdServices:
     return self.adb.is_package_installed(self._ADSERVICES_PACKAGE)
 
   def _is_adservices_running(self) -> bool:
-    return self.adb.is_process_running(self._ADSERVICES_API_PACKAGE)
+    return self.adb.is_process_running(constants.ADSERVICES_API_PACKAGE)

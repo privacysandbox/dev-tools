@@ -22,9 +22,10 @@ _ARG_BUYER = "--buyer"
 
 
 class CustomAudience:
-  """Interact with Protected Audience.
+  """Interact with Custom Audience.
 
-  This includes Custom Audience and Ad Selection.
+  Overview:
+  https://developers.google.com/privacy-sandbox/relevance/protected-audience/android#custom-audience-management
   """
 
   def __init__(
