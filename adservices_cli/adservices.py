@@ -55,7 +55,7 @@ class AdServices:
         sys_property_value = "unknown"
       print(f"{kill_switch}: {sys_property_value}")
 
-    for flag in flag_constants.FEATURE_FLAGS:
+    for flag in flag_constants.ENABLE_DEFAULT_FLAGS:
       device_config_value = self._get_adservices_device_config(flag)
       if not device_config_value:
         device_config_value = "unknown"
@@ -73,35 +73,87 @@ class AdServices:
         allow_list_value = ""
       print(f"{allow_list}: {allow_list_value}")
 
+    feature_flag_set = set()
+    for feature_name in flag_constants.FEATURE_NAMES:
+      for feature_flag in flag_constants.FEATURE_FLAGS_MAP.get(feature_name):
+        feature_flag_set.add(feature_flag)
+
+    for flag in feature_flag_set:
+      device_config_value = self._get_adservices_device_config(flag)
+      if not device_config_value:
+        device_config_value = "unknown"
+      print(f"{flag}: {device_config_value}")
+    print(
+        f"{flag_constants.AD_SELECTION_BIDDING_LOGIC_V3},"
+        f" {self._get_adservices_device_config(flag_constants.AD_SELECTION_BIDDING_LOGIC_V3)}"
+    )
+
   def enable(
       self,
+      feature_name: str,
       disable_flag_push: bool = False,
   ):
-    """Enable the adservices process and feature flags.
+    """Enable the adservices process and flags for either all features or a specific feature provided.
 
-    This command will activate all adservices features such as Measurement, Ad
-    Selection API, Custom Audience API, Topics, etc...
+    This command will activate the below adservices features based on the
+    feature_name.
+      * custom-audience -> Enables all feature flags related to custom
+      audience APIs.
+      * app-signals -> Enables all feature flags related to protected
+      app signals APIs.
+      * on-device-auction -> Enables all feature flags related to on
+      device auction APIs with bidding javascript version as 2.
+      * on-device-auction-v3 -> Enables all feature flags related to on
+      device auctions APIs with bidding javascript version as 3.
+      * server-auction -> Enables all feature flags related to APIs for
+      protected auction on bidding and auction server.
+      * reporting -> Enables all feature flags related to report
+      impression and report event APIs.
+      * kanon -> Enables all feature flags related to k-anonymity sing
+      and join functionality.
+      * all  -> Enables all the above features.
 
-    Also disables enrollment checks for FLEDGE and Topics.
+    Also disables enrollment checks for Protected Audiences and App Signals.
 
     Args:
+      feature_name: enables a specific feature or all features.
       disable_flag_push: Disable remote feature flag pushes from Google.
     """
     if not self._is_adservices_installed():
       print("Error: adservices module is not installed.")
     else:
-      self._set_service_enabled(True, disable_flag_push)
+      self._set_service_enabled(True, feature_name, disable_flag_push)
 
-  def disable(self):
+  def disable(
+      self,
+      feature_name: str,
+  ):
     """Disable the adservices process and feature flags.
 
-    This command is the inverse of the `enable` command. After disabling the
-    feature flags the adservices process is then killed.
+    This command will deactivate the below adservices features based on the
+    feature_name.
+      * custom-audience -> Enables all feature flags related to custom
+      audience APIs.
+      * app-signals -> Enables all feature flags related to protected
+      app signals APIs.
+      * on-device-auction -> Enables all feature flags related to on
+      device auction APIs with bidding javascript version as 2.
+      * on-device-auction-v3 -> Enables all feature flags related to on
+      device auctions APIs with bidding javascript version as 3.
+      * server-auction -> Enables all feature flags related to APIs for
+      protected auction on bidding and auction server.
+      * reporting -> Enables all feature flags related to report
+      impression and report event APIs.
+      * kanon -> Enables all feature flags related to k-anonymity sing
+      and join functionality.
+      * all  -> Enables all the above features.
+    Args:
+      feature_name: disables a specific feature or all features.
     """
     if not self._is_adservices_installed():
       print("Error: adservices module is not installed.")
     else:
-      self._set_service_enabled(False)
+      self._set_service_enabled(False, feature_name)
 
   def kill(self):
     """Kill the core adservices process if running.
@@ -153,25 +205,29 @@ class AdServices:
   def _set_service_enabled(
       self,
       enabled: bool,
+      feature_name: str,
       disable_flag_push: bool = False,
   ):
     """Set the adservices process and feature flags to enabled or not.
 
     Args:
       enabled: If true, disable all kill switches.
+      feature_name: enables/disables a specific feature or all features.
       disable_flag_push: If true, prevent remote flag pushes from being set.
         Uses the test override to do this.
     """
     if not self._is_service_supported():
       print("Warning: adservices is supported from 33-ext4+")
+    self._is_valid_feature_name(feature_name)
 
     kill_switch_value = "false" if enabled else "true"
     flag_value = "true" if enabled else "false"
     allow_list_value = '"*"' if enabled else '""'
+
     for kill_switch in flag_constants.KILL_SWITCHES:
       self._put_adservices_sys_prop(kill_switch, kill_switch_value)
 
-    for flag in flag_constants.FEATURE_FLAGS:
+    for flag in flag_constants.ENABLE_DEFAULT_FLAGS:
       self._put_adservices_device_config(flag, flag_value)
 
     for cli_flag in flag_constants.DEBUG_FLAGS:
@@ -179,6 +235,18 @@ class AdServices:
 
     for allow_list in flag_constants.ALLOW_LISTS:
       self._put_adservices_device_config(allow_list, allow_list_value)
+
+    if feature_name == flag_constants.FEATURE_ALL:
+      for feature in flag_constants.FEATURE_NAMES:
+        self._enable_feature(feature, flag_value)
+    else:
+      self._enable_feature(feature_name, flag_value)
+
+    if feature_name == flag_constants.ON_DEVICE_AUCTION_V3:
+      bidding_logic_js_version = "3" if enabled else "2"
+      self._put_adservices_device_config(
+          flag_constants.AD_SELECTION_BIDDING_LOGIC_V3, bidding_logic_js_version
+      )
 
     self.adb.set_sync_disabled_for_tests(
         "persistent" if enabled and disable_flag_push else "none",
@@ -229,3 +297,18 @@ class AdServices:
 
   def _is_adservices_running(self) -> bool:
     return self.adb.is_process_running(constants.ADSERVICES_API_PACKAGE)
+
+  def _is_valid_feature_name(self, feature_name: str):
+    if feature_name == flag_constants.FEATURE_ALL:
+      print(f"Enabling all features in {flag_constants.FEATURE_NAMES}")
+      return
+    if feature_name not in flag_constants.FEATURE_NAMES:
+      raise ValueError(
+          "Expected either 'all' or one of the following as feature_name"
+          f" {flag_constants.FEATURE_NAMES}"
+      )
+    print(f"Enabling {feature_name}")
+
+  def _enable_feature(self, feature_name: str, feature_flag_value: str):
+    for feature_flag in flag_constants.FEATURE_FLAGS_MAP.get(feature_name):
+      self._put_adservices_device_config(feature_flag, feature_flag_value)

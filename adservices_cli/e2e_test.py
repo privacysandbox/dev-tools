@@ -4,6 +4,7 @@ from absl.testing import absltest
 
 import adb
 import adservices
+import flag_constants
 
 
 class AdServicesTest(absltest.TestCase):
@@ -33,25 +34,43 @@ class AdServicesTest(absltest.TestCase):
     self.assertIn('force-stop', cmd)
 
   def test_enable(self):
-    self.adservices.enable()
+    self.adservices.enable(flag_constants.FEATURE_ALL)
 
     self.adb.put_device_config.assert_called()
     self.adb.setprop.assert_called()
+
+  def test_enable_invalid_argument(self):
+    try:
+      self.adservices.enable('invalid-argument')
+    except ValueError as unused_error:
+      pass
+
+    self.adb.put_device_config.assert_not_called()
+    self.adb.setprop.assert_not_called()
 
   def test_enable_without_root_android_34(self):
     self.adb.is_root.return_value = False
     self.adb.get_sdk_version.return_value = 34
 
-    self.adservices.enable()
+    self.adservices.enable(flag_constants.FEATURE_ALL)
 
     self.adb.put_device_config.assert_called()
     self.adb.setprop.assert_called()
 
   def test_disable(self):
-    self.adservices.disable()
+    self.adservices.disable('all')
 
     self.adb.put_device_config.assert_called()
     self.adb.setprop.assert_called()
+
+  def test_disable_invalid_argument(self):
+    try:
+      self.adservices.disable('invalid-argument')
+    except ValueError as unused_error:
+      pass
+
+    self.adb.put_device_config.assert_not_called()
+    self.adb.setprop.assert_not_called()
 
   def test_status(self):
     self.adservices.status()

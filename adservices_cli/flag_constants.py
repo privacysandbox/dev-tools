@@ -5,22 +5,105 @@ _GLOBAL_KILL_SWITCH = "global_kill_switch"
 _CUSTOM_AUDIENCE_KILL_SWITCH = "fledge_custom_audience_service_kill_switch"
 _SELECT_ADS_KILL_SWITCH = "fledge_select_ads_kill_switch"
 _AD_ID_KILL_SWITCH = "adid_kill_switch"
-_SERVER_AUCTIONS_KILL_SWITCH = "fledge_auction_server_kill_switch"
+_AUCTION_SERVER_KILL_SWITCH = "fledge_auction_server_kill_switch"
+_ON_DEVICE_AUCTION_KILL_SWITCH = "fledge_on_device_auction_kill_switch"
 KILL_SWITCHES = [
     _GLOBAL_KILL_SWITCH,
     _CUSTOM_AUDIENCE_KILL_SWITCH,
     _SELECT_ADS_KILL_SWITCH,
     _AD_ID_KILL_SWITCH,
-    _SERVER_AUCTIONS_KILL_SWITCH,
+    _AUCTION_SERVER_KILL_SWITCH,
+    _ON_DEVICE_AUCTION_KILL_SWITCH,
 ]
 
+## AdServices feature names
+CUSTOM_AUDIENCE = "custom-audience"
+APP_SIGNALS = "app-signals"
+ON_DEVICE_AUCTION = "on-device-auction"
+SERVER_AUCTION = "server-auction"
+REPORTING = "reporting"
+KANON = "kanon"
+ON_DEVICE_AUCTION_V3 = "on-device-auction-v3"
+
+FEATURE_ALL = "all"
+FEATURE_NAMES = [
+    CUSTOM_AUDIENCE,
+    APP_SIGNALS,
+    ON_DEVICE_AUCTION,
+    SERVER_AUCTION,
+    REPORTING,
+    KANON,
+    ON_DEVICE_AUCTION_V3,
+]
 ## AdServices feature flags
 ### AdServices
 _ENABLE_ADSERVICES_SYSTEM_SERVICE = "adservice_system_service_enabled"
+
+ENABLE_DEFAULT_FLAGS = [_ENABLE_ADSERVICES_SYSTEM_SERVICE]
+
 ### Custom audience
 _ENABLE_APP_INSTALL_FILTER = "fledge_app_install_filtering_enabled"
 _ENABLE_FREQUENCEY_FILTER = "fledge_frequency_cap_filtering_enabled"
-_ENABLE_AD_RENDER_ID = "fledge_auction_server_ad_render_id_enabled"
+_ENABLE_FETCH_CUSTOM_AUDIENCE = "fledge_fetch_custom_audience_enabled"
+_ENABLE_SCHEDULE_CUSTOM_AUDIENCE_UPDATE = (
+    "fledge_schedule_custom_audience_update_enabled"
+)
+
+ENABLE_ALL_CUSTOM_AUDIENCE_FEATURE_FLAGS = [
+    _ENABLE_APP_INSTALL_FILTER,
+    _ENABLE_FREQUENCEY_FILTER,
+    _ENABLE_FETCH_CUSTOM_AUDIENCE,
+    _ENABLE_SCHEDULE_CUSTOM_AUDIENCE_UPDATE,
+]
+
+### On Device Auction
+AD_SELECTION_BIDDING_LOGIC_V3 = "fledge_ad_selection_bidding_logic_js_version"
+_ENABLE_AD_SELECTION_PREBUILT_URI = (
+    "fledge_ad_selection_ad_selection_prebuilt_uri_enabled"
+)
+_ENABLE_EVENT_LEVEL_DEBUG_REPORTING = (
+    "fledge_event_level_debug_reporting_enabled"
+)
+_ENABLE_EVENT_LEVEL_DEBUG_REPORT_SEND_IMMEDIATELY = (
+    "fledge_event_level_debug_report_send_immediately"
+)
+_ENABLE_CONTEXTUAL_ADS_FILTER = "fledge_ad_selection_contextual_ads_enabled"
+
+ENABLE_ALL_ON_DEVICE_AD_SELECTION_FLAGS = [
+    _ENABLE_AD_SELECTION_PREBUILT_URI,
+    _ENABLE_EVENT_LEVEL_DEBUG_REPORTING,
+    _ENABLE_EVENT_LEVEL_DEBUG_REPORT_SEND_IMMEDIATELY,
+    _ENABLE_CONTEXTUAL_ADS_FILTER,
+]
+
+### Server auctions
+_ENABLE_AUCTION_SERVER = "fledge_auction_server_enabled"
+_ENABLE_AUCTION_SERVER_FOR_REPORT_IMPRESSION = (
+    "fledge_auction_server_enabled_for_report_impression"
+)
+_ENABLE_AUCTION_SERVER_FOR_REPORT_EVENT = (
+    "fledge_auction_server_enabled_for_report_event"
+)
+_ENABLE_AUCTION_SERVER_FOR_UPDATE_HISTOGRAM = (
+    "fledge_auction_server_enabled_for_update_histogram"
+)
+_ENABLE_AUCTION_SERVER_FOR_MEDIATION = (
+    "fledge_auction_server_enabled_for_select_ads_mediation"
+)
+_ENABLE_AUCTION_SERVER_AD_RENTED_ID = (
+    "fledge_auction_server_ad_render_id_enabled"
+)
+_ENABLE_AUCTION_SERVER_MULTI_CLOUD = "fledge_auction_server_multi_cloud_enabled"
+
+ENABLE_ALL_AUCTION_SERVER_FEATURE_FLAGS = [
+    _ENABLE_AUCTION_SERVER,
+    _ENABLE_AUCTION_SERVER_FOR_REPORT_IMPRESSION,
+    _ENABLE_AUCTION_SERVER_FOR_REPORT_EVENT,
+    _ENABLE_AUCTION_SERVER_FOR_UPDATE_HISTOGRAM,
+    _ENABLE_AUCTION_SERVER_FOR_MEDIATION,
+    _ENABLE_AUCTION_SERVER_AD_RENTED_ID,
+    _ENABLE_AUCTION_SERVER_MULTI_CLOUD,
+]
 
 ### Protected app signals
 _ENABLE_PROTECTED_APP_SIGNALS = "protected_signals_enabled"
@@ -28,18 +111,52 @@ _ENABLE_PROTECTED_APP_SIGNALS_ENCODING = (
     "protected_signals_periodic_encoding_enabled"
 )
 
-### Reporting
-_ENABLE_REPORT_EVENT_REGISTRATION = "fledge_register_ad_beacon_enabled"
-
-FEATURE_FLAGS = [
-    _ENABLE_ADSERVICES_SYSTEM_SERVICE,
-    _ENABLE_APP_INSTALL_FILTER,
-    _ENABLE_AD_RENDER_ID,
-    _ENABLE_FREQUENCEY_FILTER,
+ENABLE_ALL_PROTECTED_APP_SIGNALS_FEATURE_FLAGS = [
     _ENABLE_PROTECTED_APP_SIGNALS,
     _ENABLE_PROTECTED_APP_SIGNALS_ENCODING,
-    _ENABLE_REPORT_EVENT_REGISTRATION,
 ]
+
+### Reporting
+_ENABLE_REPORT_EVENT_REGISTRATION = "fledge_register_ad_beacon_enabled"
+_ENABLE_CPC_BILLING = "fledge_cpc_billing_enabled"
+_ENABLE_DATA_VERSION_HEADER = "fledge_data_version_header_enabled"
+_ENABLE_MEASUREMENT_REPORT_AND_REGISTER_EVENT_FOR_PA = (
+    "fledge_measurement_report_and_register_event_api_enabled"
+)
+
+ENABLE_ALL_REPORTING_FEATURE_FLAGS = [
+    _ENABLE_REPORT_EVENT_REGISTRATION,
+    _ENABLE_CPC_BILLING,
+    _ENABLE_DATA_VERSION_HEADER,
+    _ENABLE_MEASUREMENT_REPORT_AND_REGISTER_EVENT_FOR_PA,
+]
+
+### KAnon
+_ENABLE_KANON_SING_AND_JOIN = "fledge_kanon_sign_join_enabled"
+_ENABLE_KANON_ON_DEVICE_AUCTION = (
+    "fledge_kanon_sign_join_on_device_auction_enabled"
+)
+_ENABLE_KANON_AUCTION_SERVER = "fledge_kanon_sign_join_auction_server_enabled"
+_ENABLE_KANON_BACKGROUND_PROCESS = "fledge_kanon_background_process_enabled"
+_ENABLE_KANON_KEY_ATTESTATION = "fledge_kanon_key_attestation_enabled"
+
+ENABLE_ALL_KANON_FEATURE_FLAGS = [
+    _ENABLE_KANON_SING_AND_JOIN,
+    _ENABLE_KANON_ON_DEVICE_AUCTION,
+    _ENABLE_KANON_AUCTION_SERVER,
+    _ENABLE_KANON_BACKGROUND_PROCESS,
+    _ENABLE_KANON_KEY_ATTESTATION,
+]
+
+FEATURE_FLAGS_MAP = {
+    CUSTOM_AUDIENCE: ENABLE_ALL_CUSTOM_AUDIENCE_FEATURE_FLAGS,
+    APP_SIGNALS: ENABLE_ALL_PROTECTED_APP_SIGNALS_FEATURE_FLAGS,
+    SERVER_AUCTION: ENABLE_ALL_AUCTION_SERVER_FEATURE_FLAGS,
+    ON_DEVICE_AUCTION: ENABLE_ALL_ON_DEVICE_AD_SELECTION_FLAGS,
+    REPORTING: ENABLE_ALL_REPORTING_FEATURE_FLAGS,
+    KANON: ENABLE_ALL_KANON_FEATURE_FLAGS,
+    ON_DEVICE_AUCTION_V3: ENABLE_ALL_ON_DEVICE_AD_SELECTION_FLAGS,
+}
 
 ## AdServices debug flags
 _DISABLE_FLEDGE_ENROLLMENT_CHECK = "disable_fledge_enrollment_check"

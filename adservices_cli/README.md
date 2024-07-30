@@ -11,7 +11,7 @@ Android.
 2.  Optionally add `alias=path/to/main.py` to your .bashrc
 3.  Run `python3 main.py` to see the help screen
 
-### Enable adservices shell commands
+### Enable adservices features
 
 This tool interacts with the device by using low-level ADB commands part of the
 `adservices` module. These commands need to be explicitly enabled.
@@ -24,14 +24,45 @@ This tool interacts with the device by using low-level ADB commands part of the
 adb shell ps -A | grep com.google.android.adservices.api
 ```
 
-To enable adservices shell commands, run the following command:
+To enable a specific adservices feature, run the following command:
 
 ```
-python3 main.py enable
+python3 main.py enable --feature-name <feature_name>
 ```
+
+Allowed list of feature names is
+
+*   **custom-audience** Enables all feature flags related to custom audience
+    APIs.
+*   **app-signals** Enables all feature flags related to protected app signals
+    APIs.
+*   **on-device-auction** Enables all feature flags related to on device auction
+    APIs with bidding javascript version as 2.
+*   **on-device-auction-v3** Enables all feature flags related to on device
+    auctions APIs with bidding javascript version as 3.
+*   **server-auction** Enables all feature flags related to APIs for protected
+    auction on bidding and auction server.
+*   **reporting** Enables all feature flags related to report impression and
+    report event APIs.
+*   **kanon** Enables all feature flags related to k-anonymity sing and join
+    functionality.
+*   **all** Enables all the above features.
 
 If you interact with `adservices` before running `enable` then the flags will be
 set into a disabled state until you reboot your device.
+
+To disable a specific adservices feature, run the following command:
+
+```
+python3 main.py disable --feature-name <feature_name>
+```
+
+To check the current status of adservices process and features flags run the
+following command:
+
+```
+python3 main.py status
+```
 
 ## Inspecting custom audiences
 
@@ -126,4 +157,15 @@ command.
 
 ```
 python3 main.py ad-selection view-consented-debug
+```
+
+## Protected App Signals
+
+### Trigger encoding for all buyers on the device.
+
+To trigger the encoding logic for all buyers on the device, run the following
+command:
+
+```
+python3 main.py app-signals trigger-encoding
 ```

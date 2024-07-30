@@ -214,7 +214,7 @@ class AdbClient:
       print("cannot setprop with empty value")
     self.shell(f"setprop {key} {value}", silent)
 
-  def run_scheduled_background_job(self, namespace: str, job_id: int):
+  def run_scheduled_background_job(self, namespace: str, job_id: int) -> str:
     """Force runs a scheduled background job.
 
     Args:
