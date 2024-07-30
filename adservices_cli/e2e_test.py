@@ -6,7 +6,7 @@ import adb
 import adservices
 
 
-class AdservicesTest(absltest.TestCase):
+class AdServicesTest(absltest.TestCase):
 
   def setUp(self):
     super().setUp()
@@ -21,7 +21,7 @@ class AdservicesTest(absltest.TestCase):
 
     cmd = self.adb.shell.call_args.args[0]
     self.adb.shell.assert_called_once()
-    self.assertIn('killall', cmd)
+    self.assertIn('force-stop', cmd)
 
   def test_kill_without_root(self):
     self.adb.is_root.return_value = False
@@ -56,6 +56,7 @@ class AdservicesTest(absltest.TestCase):
   def test_status(self):
     self.adservices.status()
 
+    self.adb.get_device_config.assert_called()
     self.adb.getprop.assert_called()
 
   def test_open_ui(self):

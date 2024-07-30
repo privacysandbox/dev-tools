@@ -2,7 +2,6 @@
 
 import subprocess
 
-
 _TIMEOUT_SEC = 5
 
 
@@ -111,30 +110,6 @@ class AdbClient:
     )
     return result.stdout.decode("utf-8").strip("\n")
 
-  def get_device_config(self, namespace: str, key: str) -> str:
-    """Get a device config value.
-
-    Args:
-      namespace: namespace of the device config to get. Should usually be
-        `debug.adservices`.
-      key: key of the device config to set.
-
-    Returns:
-      value of the device config.
-    """
-    return self.shell(f"device_config get {namespace} {key}")
-
-  def put_device_config(self, namespace: str, key: str, value: str):
-    """Set a device config value.
-
-    Args:
-      namespace: namespace of the device config to set. Should usually be
-        `debug.adservices`.
-      key: key of the device config to set.
-      value: value of the device config to set.
-    """
-    self.shell(f"device_config put {namespace} {key} {value}")
-
   def set_sync_disabled_for_tests(self, value: str):
     """Set sync disabled for tests.
 
@@ -148,30 +123,6 @@ class AdbClient:
       )
     self.shell(f"device_config set_sync_disabled_for_tests {value}")
 
-  def getprop(self, key: str) -> str:
-    """Get a system property.
-
-    Args:
-      key: key of the system property to set.
-
-    Returns:
-      value of the system property.
-    """
-    return self.shell(f"getprop {key}", silent=True)
-
-  def setprop(self, key: str, value: str):
-    """Set a system property.
-
-    Args:
-      key: key of the system property to set.
-      value: value of the system property to set.
-    """
-    if not key:
-      print("cannot setprop with empty key")
-    if not value:
-      print("cannot setprop with empty value")
-    self.shell(f"setprop {key} {value}")
-
   def execute_adservices_shell_command(self, command: str) -> str:
     """Executes the adservices shell command.
 
@@ -182,6 +133,82 @@ class AdbClient:
       the result of the command.
     """
     return self.shell(f"cmd adservices_manager {command}")
+
+  def get_device_config(
+      self,
+      namespace: str,
+      key: str,
+      silent: bool = True,
+  ) -> str:
+    """Get a device config value.
+
+    Args:
+      namespace: namespace of the device config to get. Should usually be
+        `debug.adservices`.
+      key: key of the device config to set.
+      silent: if false, print the command to stdout for additional debugging.
+
+    Returns:
+      value of the device config.
+    """
+    return self.shell(f"device_config get {namespace} {key}", silent)
+
+  def put_device_config(
+      self,
+      namespace: str,
+      key: str,
+      value: str,
+      silent: bool = False,
+  ):
+    """Set a device config value.
+
+    Args:
+      namespace: namespace of the device config to set. Should usually be
+        `debug.adservices`.
+      key: key of the device config to set.
+      value: value of the device config to set.
+      silent: if false, print the command to stdout for additional debugging.
+    """
+    if not key and not key.isspace():
+      print("cannot set device config with empty key")
+    if not value:
+      print("cannot set device config with empty value")
+    self.shell(f"device_config put {namespace} {key} {value}", silent)
+
+  def getprop(
+      self,
+      key: str,
+      silent: bool = True,
+  ) -> str:
+    """Get a system property.
+
+    Args:
+      key: key of the system property to set.
+      silent: if false, print the command to stdout for additional debugging.
+
+    Returns:
+      value of the system property.
+    """
+    return self.shell(f"getprop {key}", silent)
+
+  def setprop(
+      self,
+      key: str,
+      value: str,
+      silent: bool = True,
+  ):
+    """Set a system property.
+
+    Args:
+      key: key of the system property to set.
+      value: value of the system property to set.
+      silent: if false, print the command to stdout for additional debugging.
+    """
+    if not key and not key.isspace():
+      print("cannot setprop with empty key")
+    if not value:
+      print("cannot setprop with empty value")
+    self.shell(f"setprop {key} {value}", silent)
 
   def _pidof(self, process: str) -> int:
     try:

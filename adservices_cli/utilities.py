@@ -1,4 +1,4 @@
-"""Common Utilities for executing Adservices CLI commands."""
+"""Common Utilities for executing AdServices CLI commands."""
 
 
 def format_command(
