@@ -90,7 +90,7 @@ class AdServices:
 
   def enable(
       self,
-      feature_name: str,
+      feature_name: str = flag_constants.FEATURE_ALL,
       disable_flag_push: bool = False,
   ):
     """Enable the adservices process and flags for either all features or a specific feature provided.
@@ -126,7 +126,7 @@ class AdServices:
 
   def disable(
       self,
-      feature_name: str,
+      feature_name: str = flag_constants.FEATURE_ALL,
   ):
     """Disable the adservices process and feature flags.
 
@@ -178,6 +178,11 @@ class AdServices:
       print("Error: adservices module is still running.")
     else:
       print("Success: adservices process is not running after killing.")
+
+  def view_logs_cmd(self) -> str:
+    """Prints the command to view filtered logs for adservices."""
+    tag_concat = ":* ".join(flag_constants.LOG_TAGS_FOR_VERBOSE_LOGGING)
+    return f"adb logcat -s {tag_concat}"
 
   def open_ui(self):
     """Open Privacy Sandbox UI on connected device."""
@@ -251,6 +256,11 @@ class AdServices:
     self.adb.set_sync_disabled_for_tests(
         "persistent" if enabled and disable_flag_push else "none",
     )
+
+    if enabled:
+      for log_tag in flag_constants.LOG_TAGS_FOR_VERBOSE_LOGGING:
+        self.adb.setprop(f"log.tag.{log_tag}", "VERBOSE", False)
+
     print("Killing adservices process to reset flags.")
     self.kill()
 

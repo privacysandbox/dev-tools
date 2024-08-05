@@ -90,10 +90,17 @@ _ENABLE_AUCTION_SERVER_FOR_UPDATE_HISTOGRAM = (
 _ENABLE_AUCTION_SERVER_FOR_MEDIATION = (
     "fledge_auction_server_enabled_for_select_ads_mediation"
 )
-_ENABLE_AUCTION_SERVER_AD_RENTED_ID = (
+_ENABLE_AUCTION_SERVER_AD_RENDER_ID = (
     "fledge_auction_server_ad_render_id_enabled"
 )
 _ENABLE_AUCTION_SERVER_MULTI_CLOUD = "fledge_auction_server_multi_cloud_enabled"
+_ENABLE_AUCTION_SERVER_OMIT_ADS = "fledge_auction_server_omit_ads_enabled"
+_ENABLE_AUCTION_SERVER_REQUEST_FLAGS = (
+    "fledge_auction_server_request_flags_enabled"
+)
+_ENABLE_AUCTION_SERVER_SELLER_CONFIGURATIONS = (
+    "fledge_get_ad_selection_data_seller_configuration_enabled"
+)
 
 ENABLE_ALL_AUCTION_SERVER_FEATURE_FLAGS = [
     _ENABLE_AUCTION_SERVER,
@@ -101,8 +108,11 @@ ENABLE_ALL_AUCTION_SERVER_FEATURE_FLAGS = [
     _ENABLE_AUCTION_SERVER_FOR_REPORT_EVENT,
     _ENABLE_AUCTION_SERVER_FOR_UPDATE_HISTOGRAM,
     _ENABLE_AUCTION_SERVER_FOR_MEDIATION,
-    _ENABLE_AUCTION_SERVER_AD_RENTED_ID,
+    _ENABLE_AUCTION_SERVER_AD_RENDER_ID,
     _ENABLE_AUCTION_SERVER_MULTI_CLOUD,
+    _ENABLE_AUCTION_SERVER_OMIT_ADS,
+    _ENABLE_AUCTION_SERVER_REQUEST_FLAGS,
+    _ENABLE_AUCTION_SERVER_SELLER_CONFIGURATIONS,
 ]
 
 ### Protected app signals
@@ -189,3 +199,12 @@ DEBUG_FLAGS = [
 _PP_API_ALLOW_LIST = "ppapi_app_allow_list"
 _PAS_API_ALLOW_LIST = "pas_app_allow_list"
 ALLOW_LISTS = [_PP_API_ALLOW_LIST, _PAS_API_ALLOW_LIST]
+
+LOG_TAGS_FOR_VERBOSE_LOGGING = [
+    "adservices",
+    "adservices.fledge",
+    "adservices.topics",
+    "adservices.kanon",
+    "AdServicesShellCmd",
+    "FledgeSample",
+]
