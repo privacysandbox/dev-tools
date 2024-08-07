@@ -153,7 +153,7 @@ class AdServices:
     if not self._is_adservices_installed():
       print("Error: adservices module is not installed.")
     else:
-      self._set_service_enabled(False, feature_name, True)
+      self._set_service_enabled(False, feature_name)
 
   def kill(self):
     """Kill the core adservices process if running.

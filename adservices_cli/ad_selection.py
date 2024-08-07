@@ -1,12 +1,8 @@
 """Command for interacting with Protected Audience Ad Selection CLI Commands."""
 
-import base64
 import json
 
-from google.protobuf.json_format import MessageToJson
-
 import adb
-import bidding_auction_servers_pb2
 import utilities
 
 _COMMAND_PREFIX = "ad-selection"
@@ -16,8 +12,6 @@ _CONSENTED_DEBUG_COMMAND_ENABLE_SECRET_DEBUG_TOKEN = "--secret-debug-token"
 _CONSENTED_DEBUG_COMMAND_ENABLE_EXPIRY_IN_HOURS = "--expires-in-hours"
 _CONSENTED_DEBUG_COMMAND_DISABLE = "disable"
 _CONSENTED_DEBUG_COMMAND_VIEW = "view"
-_GET_AD_SELECTION_DATA_COMMAND = "get-ad-selection-data"
-_ARG_BUYER = "--buyer"
 
 
 class AdSelection:
@@ -101,31 +95,3 @@ class AdSelection:
             {},
         )
     )
-
-  def get_ad_selection_data(self, buyer: str) -> str:
-    """Prints the JSON formatted input for GetBids request to BuyerFrontEnd service.
-
-    Args:
-      buyer: AdTech buyer.
-
-    Returns:
-      Textual output of get_ad_selection__data command.
-    """
-    command_output = self._adb.execute_adservices_shell_command(
-        utilities.format_command(
-            _COMMAND_PREFIX,
-            _GET_AD_SELECTION_DATA_COMMAND,
-            "",
-            {_ARG_BUYER: buyer},
-        )
-    )
-    try:
-      proto_json = json.loads(command_output)
-      base64_decoded_str = base64.b64decode(proto_json.get("output_proto"))
-      return MessageToJson(
-          bidding_auction_servers_pb2.GetBidsRequest.GetBidsRawRequest.FromString(
-              base64_decoded_str
-          )
-      )
-    except ValueError:
-      return command_output
