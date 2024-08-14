@@ -1,3 +1,4 @@
 absl-py
 fire
 jsondiff
+protobuf

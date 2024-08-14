@@ -169,3 +169,19 @@ command:
 ```
 python3 main.py app-signals trigger-encoding
 ```
+
+## Ad Selection
+
+### Get Ad Selection Data for a buyer.
+
+This command provides plaintext output on the console which can be used to test
+the GetBids request on Buyer FrontEnd service of Bidding and Auction
+architecture using the
+[Secure Invoke tool](https://github.com/privacysandbox/bidding-auction-servers/blob/main/tools/secure_invoke/README.md)
+
+To generate the output run the following command:
+
+```
+python3 main.py ad-selection get-ad-selection-data \
+  --buyer <buyer>
+```

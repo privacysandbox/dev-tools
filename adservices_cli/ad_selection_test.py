@@ -20,6 +20,17 @@ _DISABLED_CONSENTED_DEBUG_RESPONSE = (
     "Successfully disabled consented debugging."
 )
 
+_GET_AD_SELECTION_DATA_SHELL_CMD_RESPONSE = '{"output_proto":"EvgBCngKCXdpbm5pbmdDQRIFc2hvZXMSIGJhLWJ1eWVyLTVqeXk1dWxhZ3EtdWMuYS5ydW4uYXBwEgRrZXkxEgRrZXkyGgExKgJ7fUIvY29tLmV4YW1wbGUuYWRzZXJ2aWNlcy5zYW1wbGVzLmZsZWRnZS5zYW1wbGVhcHAKfAoNc2hpcnRzX3NlcnZlchIFc2hvZXMSIGJhLWJ1eWVyLTVqeXk1dWxhZ3EtdWMuYS5ydW4uYXBwEgRrZXkxEgRrZXkyGgEyKgJ7fUIvY29tLmV4YW1wbGUuYWRzZXJ2aWNlcy5zYW1wbGVzLmZsZWRnZS5zYW1wbGVhcHAaAnt9IgJ7fSpAUGxhY2Vob2xkZXItU2hvdWxkLU1hdGNoLVdpdGgtU2VsbGVyLU9yaWdpbi1Eb21haW4tSW4tU0ZFLUNvbmZpZzIuUGxhY2Vob2xkZXItU2hvdWxkLU1hdGNoLVdpdGgtQXBwLVBhY2thZ2UtTmFtZTgBSg4IARIKMTIzNDU2Nzg5MFICCgBYAWJKUGxhY2Vob2xkZXItU2hvdWxkLU1hdGNoLVdpdGgtVG9wLUxldmVsLVNlbGxlci1PcmlnaW4tRG9tYWluLUluLVNGRS1Db25maWdoAHAB"}'
+
+
+_GET_AD_SELECTION_DATA_EXPECTED_RESPONSE = json.loads(
+    '{"buyerInput":{"interestGroups":[{"name":"winningCA","biddingSignalsKeys":["shoes","ba-buyer-5jyy5ulagq-uc.a.run.app","key1","key2"],"adRenderIds":["1"],"userBiddingSignals":"{}","origin":"com.example.adservices.samples.fledge.sampleapp"},{"name":"shirts_server","biddingSignalsKeys":["shoes","ba-buyer-5jyy5ulagq-uc.a.run.app","key1","key2"],"adRenderIds":["2"],"userBiddingSignals":"{}","origin":"com.example.adservices.samples.fledge.sampleapp"}]},"auctionSignals":"{}","buyerSignals":"{}","seller":"Placeholder-Should-Match-With-Seller-Origin-Domain-In-SFE-Config","publisherName":"Placeholder-Should-Match-With-App-Package-Name","enableDebugReporting":true,"consentedDebugConfig":{"isConsented":true,"token":"1234567890"},"protectedAppSignalsBuyerInput":{"protectedAppSignals":{}},"clientType":"CLIENT_TYPE_ANDROID","topLevelSeller":"Placeholder-Should-Match-With-Top-Level-Seller-Origin-Domain-In-SFE-Config","buyerKvExperimentGroupId":0,"enableUnlimitedEgress":true}'
+)
+
+_GET_AD_SELECTION_DATA_SHELL_CMD_NO_DATA_RESPONSE = (
+    "could not find data for buyer: test-buyer"
+)
+
 
 class AdSelectionTest(absltest.TestCase):
 
@@ -103,6 +114,39 @@ class AdSelectionTest(absltest.TestCase):
         self.adb.shell_calls[0],
     )
     self.assertEqual(output, _DISABLED_CONSENTED_DEBUG_RESPONSE)
+
+  def test_get_ad_selection_data_happy_path(self):
+    self.adb.set_shell_outputs([_GET_AD_SELECTION_DATA_SHELL_CMD_RESPONSE])
+    buyer = "test-buyer"
+
+    output = self.ad_selection.get_ad_selection_data(buyer)
+
+    self.assertContainsSubset(
+        utilities.split_adb_command(ad_selection._COMMAND_PREFIX)
+        + [
+            ad_selection._GET_AD_SELECTION_DATA_COMMAND,
+        ],
+        self.adb.shell_calls[0],
+    )
+    json_output = json.loads(output)
+    self.assertEqual(json_output, _GET_AD_SELECTION_DATA_EXPECTED_RESPONSE)
+
+  def test_get_ad_selection_data_no_data_for_buyer(self):
+    self.adb.set_shell_outputs(
+        [_GET_AD_SELECTION_DATA_SHELL_CMD_NO_DATA_RESPONSE]
+    )
+    buyer = "test-buyer"
+
+    output = self.ad_selection.get_ad_selection_data(buyer)
+
+    self.assertContainsSubset(
+        utilities.split_adb_command(ad_selection._COMMAND_PREFIX)
+        + [
+            ad_selection._GET_AD_SELECTION_DATA_COMMAND,
+        ],
+        self.adb.shell_calls[0],
+    )
+    self.assertEqual(output, _GET_AD_SELECTION_DATA_SHELL_CMD_NO_DATA_RESPONSE)
 
 
 if __name__ == "__main__":
