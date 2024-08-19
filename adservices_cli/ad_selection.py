@@ -1,24 +1,26 @@
-"""
-Copyright 2024 Google LLC
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 """Command for interacting with Protected Audience Ad Selection CLI Commands."""
 
+import base64
 import json
 
+from google.protobuf.json_format import MessageToJson
+
 import adb
+import bidding_auction_servers_pb2
 import utilities
 
 _COMMAND_PREFIX = "ad-selection"
@@ -28,6 +30,8 @@ _CONSENTED_DEBUG_COMMAND_ENABLE_SECRET_DEBUG_TOKEN = "--secret-debug-token"
 _CONSENTED_DEBUG_COMMAND_ENABLE_EXPIRY_IN_HOURS = "--expires-in-hours"
 _CONSENTED_DEBUG_COMMAND_DISABLE = "disable"
 _CONSENTED_DEBUG_COMMAND_VIEW = "view"
+_GET_AD_SELECTION_DATA_COMMAND = "get-ad-selection-data"
+_ARG_BUYER = "--buyer"
 
 
 class AdSelection:
@@ -111,3 +115,31 @@ class AdSelection:
             {},
         )
     )
+
+  def get_ad_selection_data(self, buyer: str) -> str:
+    """Prints the JSON formatted input for GetBids request to BuyerFrontEnd service.
+
+    Args:
+      buyer: AdTech buyer.
+
+    Returns:
+      Textual output of get_ad_selection__data command.
+    """
+    command_output = self._adb.execute_adservices_shell_command(
+        utilities.format_command(
+            _COMMAND_PREFIX,
+            _GET_AD_SELECTION_DATA_COMMAND,
+            "",
+            {_ARG_BUYER: buyer},
+        )
+    )
+    try:
+      proto_json = json.loads(command_output)
+      base64_decoded_str = base64.b64decode(proto_json.get("output_proto"))
+      return MessageToJson(
+          bidding_auction_servers_pb2.GetBidsRequest.GetBidsRawRequest.FromString(
+              base64_decoded_str
+          )
+      )
+    except ValueError:
+      return command_output
