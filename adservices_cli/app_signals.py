@@ -14,11 +14,17 @@
 
 """Command for interacting with Protected App Signals CLI Commands."""
 
+from typing import Optional
+
 import adb
 import constants
+import utilities
 
 
 _TRIGGER_ENCODING_JOB_ID = 29
+_COMMAND_PREFIX = "app-signals"
+_TRIGGER_ENCODING_COMMAND = "trigger-encoding"
+_ARG_BUYER = "--buyer"
 
 
 class AppSignals:
@@ -34,12 +40,27 @@ class AppSignals:
   ):
     self._adb = adb_client
 
-  def trigger_encoding(self) -> str:
-    """Triggers encoding for all buyers who have updated signals on the device.
+  def trigger_encoding(self, buyer: Optional[str]) -> str:
+    """Triggers script download, update and encoding for signals on the device.
+
+    Args:
+      buyer: Optional. The specific buyer to trigger encoding for. If unset,
+        then encoding will run for all buyers.
 
     Returns:
       Textual output of trigger encoding command.
     """
+    if buyer:
+      return self._adb.execute_adservices_shell_command(
+          utilities.format_command(
+              _COMMAND_PREFIX,
+              _TRIGGER_ENCODING_COMMAND,
+              "",
+              {
+                  _ARG_BUYER: buyer,
+              },
+          )
+      )
     return self._adb.run_scheduled_background_job(
         constants.ADSERVICES_API_PACKAGE, _TRIGGER_ENCODING_JOB_ID
     )

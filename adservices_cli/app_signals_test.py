@@ -42,7 +42,7 @@ class AdSelectionTest(absltest.TestCase):
         _TRIGGER_ENCODING_SUCCESS_RESPONSE,
     ])
 
-    output = self.app_signals.trigger_encoding()
+    output = self.app_signals.trigger_encoding(None)
 
     self.assertContainsSubset(
         utilities.split_adb_command(
@@ -53,10 +53,27 @@ class AdSelectionTest(absltest.TestCase):
     )
     self.assertEqual(output, _TRIGGER_ENCODING_SUCCESS_RESPONSE)
 
+  def test_trigger_encoding_for_buyer_happy_path(self):
+    buyer = "example.com"
+    self.adb.set_shell_outputs([
+        _TRIGGER_ENCODING_SUCCESS_RESPONSE,
+    ])
+
+    output = self.app_signals.trigger_encoding(buyer)
+
+    self.assertContainsSubset(
+        utilities.split_adb_command(
+            "cmd adservices_manager"
+            f" {app_signals._COMMAND_PREFIX} {app_signals._TRIGGER_ENCODING_COMMAND} {app_signals._ARG_BUYER} {buyer}"
+        ),
+        self.adb.shell_calls[0],
+    )
+    self.assertEqual(output, _TRIGGER_ENCODING_SUCCESS_RESPONSE)
+
   def test_trigger_encoding_failure(self):
     self.adb.set_shell_outputs([_TRIGGER_ENCODING_FAILURE_RESPONSE])
 
-    output = self.app_signals.trigger_encoding()
+    output = self.app_signals.trigger_encoding(None)
 
     self.assertContainsSubset(
         utilities.split_adb_command(

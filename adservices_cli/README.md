@@ -170,6 +170,14 @@ command:
 python3 main.py app-signals trigger-encoding
 ```
 
+You can also trigger encoding for just one buyer, to speed up the process, like
+so:
+
+```
+python3 main.py app-signals trigger-encoding \
+  --buyer <buyer>
+```
+
 ## Ad Selection
 
 ### Get Ad Selection Data for a buyer.
@@ -184,4 +192,18 @@ To generate the output run the following command:
 ```
 python3 main.py ad-selection get-ad-selection-data \
   --buyer <buyer>
+```
+
+### View the result of an auction
+
+This command prints the result of an Auction in JSON format, for a given "ad
+selection id". Ad selection ID's can be found in the
+`AdSelectionOutcome#getAdSelectionId()` method or logcat entries after the
+auction has completed.
+
+To generate the output run the following command:
+
+```
+python3 main.py ad-selection view-auction-result \
+  --ad-selection-id <ad-selection-id>
 ```
