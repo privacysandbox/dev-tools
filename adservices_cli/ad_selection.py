@@ -31,7 +31,9 @@ _CONSENTED_DEBUG_COMMAND_ENABLE_EXPIRY_IN_HOURS = "--expires-in-hours"
 _CONSENTED_DEBUG_COMMAND_DISABLE = "disable"
 _CONSENTED_DEBUG_COMMAND_VIEW = "view"
 _GET_AD_SELECTION_DATA_COMMAND = "get-ad-selection-data"
+_VIEW_AUCTION_RESULT_COMMAND = "view-auction-result"
 _ARG_BUYER = "--buyer"
+_ARG_AD_SELECTION_ID = "--ad-selection-id"
 
 
 class AdSelection:
@@ -138,6 +140,35 @@ class AdSelection:
       base64_decoded_str = base64.b64decode(proto_json.get("output_proto"))
       return MessageToJson(
           bidding_auction_servers_pb2.GetBidsRequest.GetBidsRawRequest.FromString(
+              base64_decoded_str
+          )
+      )
+    except ValueError:
+      return command_output
+
+  def view_auction_result(self, ad_selection_id: str) -> str:
+    """View the result of an auction.
+
+    Args:
+      ad_selection_id: Identifier for the auction, sometimes called "Generation
+        ID" in B&A terminology.
+
+    Returns:
+      Textual output of view_auction_result command.
+    """
+    command_output = self._adb.execute_adservices_shell_command(
+        utilities.format_command(
+            _COMMAND_PREFIX,
+            _VIEW_AUCTION_RESULT_COMMAND,
+            "",
+            {_ARG_AD_SELECTION_ID: ad_selection_id},
+        )
+    )
+    try:
+      proto_json = json.loads(command_output)
+      base64_decoded_str = base64.b64decode(proto_json.get("output_proto"))
+      return MessageToJson(
+          bidding_auction_servers_pb2.AuctionResult.FromString(
               base64_decoded_str
           )
       )

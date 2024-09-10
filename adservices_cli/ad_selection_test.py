@@ -45,6 +45,15 @@ _GET_AD_SELECTION_DATA_SHELL_CMD_NO_DATA_RESPONSE = (
     "could not find data for buyer: test-buyer"
 )
 
+_TEST_AD_SELECTION_ID = "-123456789"
+_VIEW_AUCTION_RESULT_SHELL_CMD_RESPONSE = '{"output_proto":"Ck9odHRwczovLzI0YjZiYjJjLTY1NzEtNDYzMi1iNTQ5LTZhNDk2YzE1MTk4OC5tb2NrLnBzdG1uLmlvL2JpZGRpbmcvcmVuZGVyX3Nob2VzGgVzaG9lcyIyMjRiNmJiMmMtNjU3MS00NjMyLWI1NDktNmE0OTZjMTUxOTg4Lm1vY2sucHN0bW4uaW81AAAgQUIECgAaAGovY29tLmV4YW1wbGUuYWRzZXJ2aWNlcy5zYW1wbGVzLmZsZWRnZS5zYW1wbGVhcHA="}'
+_VIEW_AUCTION_RESULT_EXPECTED_RESPONSE = json.loads(
+    '{"adRenderUrl":"https://24b6bb2c-6571-4632-b549-6a496c151988.mock.pstmn.io/bidding/render_shoes","interestGroupName":"shoes","interestGroupOwner":"24b6bb2c-6571-4632-b549-6a496c151988.mock.pstmn.io","bid":10.0,"winReportingUrls":{"buyerReportingUrls":{},"topLevelSellerReportingUrls":{}},"interestGroupOrigin":"com.example.adservices.samples.fledge.sampleapp"}'
+)
+_VIEW_AUCTION_RESULT_SHELL_CMD_NO_DATA_RESPONSE = (
+    "no auction result found for ad selection id: " + _TEST_AD_SELECTION_ID
+)
+
 
 class AdSelectionTest(absltest.TestCase):
 
@@ -161,6 +170,39 @@ class AdSelectionTest(absltest.TestCase):
         self.adb.shell_calls[0],
     )
     self.assertEqual(output, _GET_AD_SELECTION_DATA_SHELL_CMD_NO_DATA_RESPONSE)
+
+  def test_view_auction_result_happy_path(self):
+    self.adb.set_shell_outputs([_VIEW_AUCTION_RESULT_SHELL_CMD_RESPONSE])
+    ad_selection_id = _TEST_AD_SELECTION_ID
+
+    output = self.ad_selection.view_auction_result(ad_selection_id)
+
+    self.assertContainsSubset(
+        utilities.split_adb_command(ad_selection._COMMAND_PREFIX)
+        + [
+            ad_selection._VIEW_AUCTION_RESULT_COMMAND,
+        ],
+        self.adb.shell_calls[0],
+    )
+    json_output = json.loads(output)
+    self.assertEqual(json_output, _VIEW_AUCTION_RESULT_EXPECTED_RESPONSE)
+
+  def test_view_auction_result_no_data_for_ad_selection_id(self):
+    self.adb.set_shell_outputs(
+        [_VIEW_AUCTION_RESULT_SHELL_CMD_NO_DATA_RESPONSE]
+    )
+    ad_selection_id = _TEST_AD_SELECTION_ID
+
+    output = self.ad_selection.view_auction_result(ad_selection_id)
+
+    self.assertContainsSubset(
+        utilities.split_adb_command(ad_selection._COMMAND_PREFIX)
+        + [
+            ad_selection._VIEW_AUCTION_RESULT_COMMAND,
+        ],
+        self.adb.shell_calls[0],
+    )
+    self.assertEqual(output, _VIEW_AUCTION_RESULT_SHELL_CMD_NO_DATA_RESPONSE)
 
 
 if __name__ == "__main__":
