@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+edition = "2023";
 
 package com.android.adservices.service.proto.bidding_auction_servers;
+
+option features.field_presence = IMPLICIT;
 
 // ProtectedAuctionInput is generated and encrypted by the client,
 // passed through the untrusted Seller service, and decrypted by the
@@ -115,6 +117,7 @@ message BuyerInput {
       AndroidSignals android_signals = 6;
     }
   }
+
   // The Custom Audiences owned by the buyer.
   repeated InterestGroup interest_groups = 1;
 
@@ -384,7 +387,8 @@ message GetBidsRequest {
     // Optional.
     // The Id is specified by the buyer to support coordinated experiments
     // with the buyer's Key/Value services.
-    optional int32 buyer_kv_experiment_group_id = 13;
+    int32 buyer_kv_experiment_group_id = 13
+        [features.field_presence = EXPLICIT];
 
     // Optional.
     // A boolean value which indicates whether temporary unlimited egress should
