@@ -14,8 +14,6 @@
 
 """Command for interacting with Protected App Signals CLI Commands."""
 
-from typing import Optional
-
 import adb
 import constants
 import utilities
@@ -40,7 +38,7 @@ class AppSignals:
   ):
     self._adb = adb_client
 
-  def trigger_encoding(self, buyer: Optional[str]) -> str:
+  def trigger_encoding(self, buyer: str = "") -> str:
     """Triggers script download, update and encoding for signals on the device.
 
     Args:
