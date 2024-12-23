@@ -185,6 +185,7 @@ FEATURE_FLAGS_MAP = {
 ## AdServices debug flags
 _DISABLE_FLEDGE_ENROLLMENT_CHECK = "disable_fledge_enrollment_check"
 _CONSENT_MANAGER_DEBUG_MODE = "consent_manager_debug_mode"
+_CONSENT_NOTIFICATION_DEBUG_MODE = "consent_notification_debug_mode"
 _ENABLE_ADSERVICES_SHELL = "adservices_shell_command_enabled"
 _ENABLE_CUSTOM_AUDIENCE_CLI = "fledge_is_custom_audience_cli_enabled"
 _ENABLE_JS_COLSOLE_LOGS = (
@@ -200,6 +201,7 @@ _ENABLE_PROTECTED_APP_SIGNALS_CLI = "fledge_is_app_signals_cli_enabled"
 DEBUG_FLAGS = [
     _DISABLE_FLEDGE_ENROLLMENT_CHECK,
     _CONSENT_MANAGER_DEBUG_MODE,
+    _CONSENT_NOTIFICATION_DEBUG_MODE,
     _ENABLE_ADSERVICES_SHELL,
     _ENABLE_AD_SELECTION_CLI,
     _ENABLE_CONSENTED_DEBUGGING,
