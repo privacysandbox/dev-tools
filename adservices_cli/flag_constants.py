@@ -217,6 +217,7 @@ ALLOW_LISTS = [_PP_API_ALLOW_LIST, _PAS_API_ALLOW_LIST]
 LOG_TAGS_FOR_VERBOSE_LOGGING = [
     "adservices",
     "adservices.fledge",
+    "adservices.measurement",
     "adservices.topics",
     "adservices.kanon",
     "AdServicesShellCmd",
