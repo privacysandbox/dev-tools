@@ -105,7 +105,7 @@ class AdServices:
   def enable(
       self,
       feature_name: str = flag_constants.FEATURE_ALL,
-      disable_flag_push: bool = False,
+      disable_flag_push: bool = True,
   ):
     """Enable the adservices process and flags for either all features or a specific feature provided.
 
@@ -268,7 +268,7 @@ class AdServices:
       )
 
     self.adb.set_sync_disabled_for_tests(
-        "persistent" if enabled and disable_flag_push else "none",
+        "until_reboot" if enabled and disable_flag_push else "none",
     )
 
     if enabled:
