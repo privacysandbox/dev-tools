@@ -196,6 +196,7 @@ _ENABLE_SERVER_AUCTION_CONSENTED_DEBUGGING = (
     "fledge_auction_server_consented_debugging_enabled"
 )
 _ENABLE_PROTECTED_APP_SIGNALS_CLI = "fledge_is_app_signals_cli_enabled"
+_ENABLE_MEASUREMENT_ATTRIBUTION_REPORTING_CLI = "measurement_attribution_reporting_cli_enabled"
 
 DEBUG_FLAGS = [
     _DISABLE_FLEDGE_ENROLLMENT_CHECK,
@@ -207,6 +208,7 @@ DEBUG_FLAGS = [
     _ENABLE_JS_COLSOLE_LOGS,
     _ENABLE_CUSTOM_AUDIENCE_CLI,
     _ENABLE_PROTECTED_APP_SIGNALS_CLI,
+    _ENABLE_MEASUREMENT_ATTRIBUTION_REPORTING_CLI,
 ]
 
 # AdServices allow lists
