@@ -21,6 +21,7 @@ import adb
 import app_signals
 import constants
 import custom_audience
+import dev_session
 import device_utils
 import flag_constants
 
@@ -47,6 +48,7 @@ class AdServices:
     self.custom_audience = custom_audience.CustomAudience(adb_client)
     self.ad_selection = ad_selection.AdSelection(adb_client)
     self.app_signals = app_signals.AppSignals(adb_client)
+    self.dev_session = dev_session.DevSession(adb_client)
 
   def status(self):
     """Print details about running adservices.
