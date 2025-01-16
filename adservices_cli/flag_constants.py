@@ -82,12 +82,13 @@ _ENABLE_EVENT_LEVEL_DEBUG_REPORT_SEND_IMMEDIATELY = (
     "fledge_event_level_debug_report_send_immediately"
 )
 _ENABLE_CONTEXTUAL_ADS_FILTER = "fledge_ad_selection_contextual_ads_enabled"
-
+_ENABLE_HTTP_CACHE_ENABLE_JS_CACHING = "fledge_http_cache_enable_js_caching"
 ENABLE_ALL_ON_DEVICE_AD_SELECTION_FLAGS = [
     _ENABLE_AD_SELECTION_PREBUILT_URI,
     _ENABLE_EVENT_LEVEL_DEBUG_REPORTING,
     _ENABLE_EVENT_LEVEL_DEBUG_REPORT_SEND_IMMEDIATELY,
     _ENABLE_CONTEXTUAL_ADS_FILTER,
+    _ENABLE_HTTP_CACHE_ENABLE_JS_CACHING,
 ]
 
 ### Server auctions
@@ -185,6 +186,7 @@ FEATURE_FLAGS_MAP = {
 ## AdServices debug flags
 _DISABLE_FLEDGE_ENROLLMENT_CHECK = "disable_fledge_enrollment_check"
 _CONSENT_MANAGER_DEBUG_MODE = "consent_manager_debug_mode"
+_CONSENT_NOTIFICATION_DEBUG_MODE = "consent_notification_debug_mode"
 _ENABLE_ADSERVICES_SHELL = "adservices_shell_command_enabled"
 _ENABLE_CUSTOM_AUDIENCE_CLI = "fledge_is_custom_audience_cli_enabled"
 _ENABLE_JS_COLSOLE_LOGS = (
@@ -202,6 +204,7 @@ _ENABLE_DEV_SESSION_FEATURE = "developer_session_feature_enabled"
 DEBUG_FLAGS = [
     _DISABLE_FLEDGE_ENROLLMENT_CHECK,
     _CONSENT_MANAGER_DEBUG_MODE,
+    _CONSENT_NOTIFICATION_DEBUG_MODE,
     _ENABLE_ADSERVICES_SHELL,
     _ENABLE_AD_SELECTION_CLI,
     _ENABLE_CONSENTED_DEBUGGING,
@@ -223,6 +226,10 @@ LOG_TAGS_FOR_VERBOSE_LOGGING = [
     "adservices.fledge",
     "adservices.topics",
     "adservices.kanon",
+    "adservices.measurement",
+    "adservices.ui",
+    "adservices.adid",
+    "adservices.appsetid",
     "AdServicesShellCmd",
     "FledgeSample",
 ]
