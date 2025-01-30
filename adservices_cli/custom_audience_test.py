@@ -23,24 +23,25 @@ import utilities
 _TEST_NAME = 'test_name'
 _TEST_INSTALLED_OWNER_PACKAGE = 'com.example.test'
 _TEST_BUYER = 'com.example'
-_TEST_CUSTOM_AUDIENCE_NAME = 'test_custom_audience_name'
-_TEST_CUSTOM_AUDIENCE = {
-    'name': _TEST_CUSTOM_AUDIENCE_NAME,
-    'field': 'test_data',
-}
-_TEST_CUSTOM_AUDIENCE_MODIFIED = {
-    'name': _TEST_CUSTOM_AUDIENCE_NAME,
-    'field': 'modified_test_data',
-}
+
+_TEST_CUSTOM_AUDIENCE = json.loads(
+    '{"name":"shoes","owner":"com.example.adservices.samples.fledge.sampleapp","buyer":"buyer-example.com","daily_update":{"uri":"https://buyer-example.com/dailyupdate/shoes","eligible_update_time":"2025-01-16T14:13:23.245Z","num_validation_failures":0,"num_timeout_failures":0},"is_debuggable":true,"creation_time":"2025-01-15T14:13:23.245Z","activation_time":"2025-01-15T14:13:23.245Z","expiration_time":"2025-03-16T14:13:23.245Z","updated_time":"2025-01-15T14:13:23.245Z","bidding_logic_uri":"https://buyer-example.com/buyer/bidding/simple_logic","user_bidding_signals":"{}","is_eligible_for_on_device_auction":true,"is_eligible_for_server_auction":false,"uri":"https://buyer-example.com/dailyupdate/shoes","trusted_bidding_data":{"uri":"https://buyer-example.com/bidding/trusted","keys":["shoes","buyer-example.com","key1","key2"]},"ads":[{"render_uri":"https://buyer-example.com/buyer/bidding/render_shoes","metadata":"{}","ad_counter_keys":[]}]}'
+)
+
+_TEST_CUSTOM_AUDIENCE_MODIFIED = json.loads(
+    '{"name":"shoes","owner":"com.example.adservices.samples.fledge.sampleapp","buyer":"buyer-example.com","daily_update":{"uri":"https://buyer-example.com/dailyupdate/shoes","eligible_update_time":"2025-01-16T14:15:28.050Z","num_validation_failures":0,"num_timeout_failures":0},"is_debuggable":true,"creation_time":"2025-01-15T14:13:23.245Z","activation_time":"2025-01-15T14:13:23.245Z","expiration_time":"2025-03-16T14:13:23.245Z","updated_time":"2025-01-15T14:15:28.050Z","bidding_logic_uri":"https://buyer-example.com/buyer/bidding/simple_logic","user_bidding_signals":{"valid":true,"arbitrary":"yes"},"is_eligible_for_on_device_auction":true,"is_eligible_for_server_auction":false,"uri":"https://buyer-example.com/dailyupdate/shoes","trusted_bidding_data":{"uri":"https://buyer-example.com/trusted/biddingsignals/simple","keys":["key1","key2"]},"ads":[{"render_uri":"https://buyer-example.com/render/shoes/ad0?date=2025-01-15","metadata":{"bid":1},"ad_counter_keys":[]},{"render_uri":"https://buyer-example.com/render/shoes/ad1?date=2025-01-15","metadata":{"bid":2},"ad_counter_keys":[]},{"render_uri":"https://buyer-example.com/render/shoes/ad2?date=2025-01-15","metadata":{"bid":3},"ad_counter_keys":[]},{"render_uri":"https://buyer-example.com/render/shoes/ad3?date=2025-01-15","metadata":{"bid":4},"ad_counter_keys":[]},{"render_uri":"https://buyer-example.com/render/shoes/ad4?date=2025-01-15","metadata":{"bid":5},"ad_counter_keys":[]}]}'
+)
+
+_REFRESH_COM_EXPECTED_OUTPUT = json.loads(
+    '{"existing_custom_audience":{"name":"shoes","owner":"com.example.adservices.samples.fledge.sampleapp","buyer":"buyer-example.com","daily_update":{"uri":"https://buyer-example.com/dailyupdate/shoes","eligible_update_time":"2025-01-16T14:13:23.245Z","num_validation_failures":0,"num_timeout_failures":0},"is_debuggable":true,"creation_time":"2025-01-15T14:13:23.245Z","activation_time":"2025-01-15T14:13:23.245Z","expiration_time":"2025-03-16T14:13:23.245Z","updated_time":"2025-01-15T14:13:23.245Z","bidding_logic_uri":"https://buyer-example.com/buyer/bidding/simple_logic","user_bidding_signals":"{}","is_eligible_for_on_device_auction":true,"is_eligible_for_server_auction":false,"uri":"https://buyer-example.com/dailyupdate/shoes","trusted_bidding_data":{"uri":"https://buyer-example.com/bidding/trusted","keys":["shoes","buyer-example.com","key1","key2"]},"ads":[{"render_uri":"https://buyer-example.com/buyer/bidding/render_shoes","metadata":"{}","ad_counter_keys":[]}]},"updated_fields":{"$update":{"daily_update":{"$update":{"eligible_update_time":"2025-01-16T14:15:28.050Z"}},"updated_time":"2025-01-15T14:15:28.050Z","user_bidding_signals":{"valid":true,"arbitrary":"yes"},"trusted_bidding_data":{"$update":{"uri":"https://buyer-example.com/trusted/biddingsignals/simple","keys":{"$delete":[1,0]}}},"ads":{"4":{"$update":{"render_uri":"https://buyer-example.com/render/shoes/ad4?date=2025-01-15","metadata":{"bid":5}}},"$insert":[[0,{"render_uri":"https://buyer-example.com/render/shoes/ad0?date=2025-01-15","metadata":{"bid":1},"ad_counter_keys":[]}],[1,{"render_uri":"https://buyer-example.com/render/shoes/ad1?date=2025-01-15","metadata":{"bid":2},"ad_counter_keys":[]}],[2,{"render_uri":"https://buyer-example.com/render/shoes/ad2?date=2025-01-15","metadata":{"bid":3},"ad_counter_keys":[]}],[3,{"render_uri":"https://buyer-example.com/render/shoes/ad3?date=2025-01-15","metadata":{"bid":4},"ad_counter_keys":[]}]]}}}}'
+)
 
 _LIST_AUDIENCES_RESPONSE = {'audiences': [_TEST_CUSTOM_AUDIENCE]}
 _LIST_AUDIENCES_RESPONSE_EMPTY = {'audiences': []}
 _REFRESH_AUDIENCE_RESPONSE = {}
-_GET_AUDIENCE_RESPONSE = {'audiences': [_TEST_CUSTOM_AUDIENCE]}
-_GET_AUDIENCE_RESPONSE_MODIFIED = {
-    'audiences': [_TEST_CUSTOM_AUDIENCE_MODIFIED]
-}
-_GET_AUDIENCE_RESPONSE_EMPTY = {'audiences': []}
+_GET_AUDIENCE_RESPONSE = _TEST_CUSTOM_AUDIENCE
+_GET_AUDIENCE_RESPONSE_MODIFIED = _TEST_CUSTOM_AUDIENCE_MODIFIED
+_GET_AUDIENCE_RESPONSE_EMPTY = {}
 
 
 class CustomAudienceTest(absltest.TestCase):
@@ -148,7 +149,7 @@ class CustomAudienceTest(absltest.TestCase):
     self.adb.set_shell_outputs([
         json.dumps(_GET_AUDIENCE_RESPONSE),
         json.dumps(_REFRESH_AUDIENCE_RESPONSE),
-        json.dumps(json.dumps(_GET_AUDIENCE_RESPONSE_MODIFIED)),
+        json.dumps(_GET_AUDIENCE_RESPONSE_MODIFIED),
     ])
 
     diffed_json = json.loads(
@@ -158,12 +159,7 @@ class CustomAudienceTest(absltest.TestCase):
             buyer=_TEST_BUYER,
         )
     )
-
-    self.assertEqual(
-        diffed_json['updated_fields'],
-        '{"audiences": [{"name": "test_custom_audience_name", "field":'
-        ' "modified_test_data"}]}',
-    )
+    self.assertEqual(diffed_json, _REFRESH_COM_EXPECTED_OUTPUT)
     parts = utilities.split_adb_command(custom_audience._COMMAND_PREFIX) + [
         custom_audience._ARG_OWNER,
         _TEST_INSTALLED_OWNER_PACKAGE,

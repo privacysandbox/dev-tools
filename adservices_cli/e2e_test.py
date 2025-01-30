@@ -52,6 +52,14 @@ class AdServicesTest(absltest.TestCase):
 
     self.adb.put_device_config.assert_called()
     self.adb.setprop.assert_called()
+    self.adb.set_sync_disabled_for_tests.assert_called_once_with('until_reboot')
+
+  def test_enable_disable_flag_push_is_false(self):
+    self.adservices.enable(flag_constants.FEATURE_ALL, False)
+
+    self.adb.put_device_config.assert_called()
+    self.adb.setprop.assert_called()
+    self.adb.set_sync_disabled_for_tests.assert_called_once_with('none')
 
   def test_enable_invalid_argument(self):
     try:
@@ -76,6 +84,7 @@ class AdServicesTest(absltest.TestCase):
 
     self.adb.put_device_config.assert_called()
     self.adb.setprop.assert_called()
+    self.adb.set_sync_disabled_for_tests.assert_called_once_with('none')
 
   def test_disable_invalid_argument(self):
     try:

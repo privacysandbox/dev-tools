@@ -141,13 +141,18 @@ class CustomAudience:
       updated_custom_audience = json.loads(
           self._do_get_custom_audience(name, owner_app_package, buyer)
       )
+      diff_in_ca = json.loads(
+          jsondiff.diff(
+              existing_custom_audience,
+              updated_custom_audience,
+              syntax="explicit",
+              dump=True,
+          )
+      )
       return json.dumps(
           {
               "existing_custom_audience": existing_custom_audience,
-              "updated_fields": jsondiff.diff(
-                  existing_custom_audience,
-                  updated_custom_audience,
-              ),
+              "updated_fields": diff_in_ca,
           },
           indent=4,
       )
