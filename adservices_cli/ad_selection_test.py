@@ -35,10 +35,19 @@ _DISABLED_CONSENTED_DEBUG_RESPONSE = (
 )
 
 _GET_AD_SELECTION_DATA_SHELL_CMD_RESPONSE = '{"output_proto":"EvgBCngKCXdpbm5pbmdDQRIFc2hvZXMSIGJhLWJ1eWVyLTVqeXk1dWxhZ3EtdWMuYS5ydW4uYXBwEgRrZXkxEgRrZXkyGgExKgJ7fUIvY29tLmV4YW1wbGUuYWRzZXJ2aWNlcy5zYW1wbGVzLmZsZWRnZS5zYW1wbGVhcHAKfAoNc2hpcnRzX3NlcnZlchIFc2hvZXMSIGJhLWJ1eWVyLTVqeXk1dWxhZ3EtdWMuYS5ydW4uYXBwEgRrZXkxEgRrZXkyGgEyKgJ7fUIvY29tLmV4YW1wbGUuYWRzZXJ2aWNlcy5zYW1wbGVzLmZsZWRnZS5zYW1wbGVhcHAaAnt9IgJ7fSpAUGxhY2Vob2xkZXItU2hvdWxkLU1hdGNoLVdpdGgtU2VsbGVyLU9yaWdpbi1Eb21haW4tSW4tU0ZFLUNvbmZpZzIuUGxhY2Vob2xkZXItU2hvdWxkLU1hdGNoLVdpdGgtQXBwLVBhY2thZ2UtTmFtZTgBSg4IARIKMTIzNDU2Nzg5MFICCgBYAWJKUGxhY2Vob2xkZXItU2hvdWxkLU1hdGNoLVdpdGgtVG9wLUxldmVsLVNlbGxlci1PcmlnaW4tRG9tYWluLUluLVNGRS1Db25maWdoAHAB"}'
+_GET_AD_SELECTION_DATA_SHELL_CMD_RESPONSE_FOR_SELLER = '{"output_proto":"CooBCgtleGFtcGxlLmNvbRJ7H4sIAAAAAAAA\\/+NK5uIsz8zLy8xLd3YUYi3OyE8tFuJOrUjMLchJ\n1UvOzxViyU6tNASTRlKMhlpM1bVO+kBxPZiaxJTi1KKyzOTUYr1isEixXlpOakp6KpSbWFDAlc7F\nW5yRWVRSHA9Sm1pE2CIjsiwCAAj\\/PHbOAAAAEi5QbGFjZWhvbGRlci1TaG91bGQtTWF0Y2gtV2l0aC1BcHAtUGFja2FnZS1OYW1lGAEiFC01NjU2OTEzNzcwNjQ1MjI1NDIzKgAwAVAB"}'
+_GET_AD_SELECTION_DATA_SHELL_CMD_RESPONSE_FOR_SELLER_EMPTY = '{"output_proto":"Ei5QbGFjZWhvbGRlci1TaG91bGQtTWF0Y2gtV2l0aC1BcHAtUGFja2FnZS1OYW1lGAEiFC00NzU2\nMjI2NjQ2NTEwODU1MjUzKgAwAVAB\n"}'
+_GET_AD_SELECTION_DATA_SHELL_CMD_INVALID_PROTO_RESPONSE = '{"output_proto":"EvgBCngKCXdpbm5pbmdDQRIFc2hvZXMSIGJhLWJ1eWVyLTVqeXk1dWxhZ3EtdWMuYS5ydW4uYXBwEgRrZXkxEgRrZXkyGgExKgJ7fUIvY29tLmV4YW1wbGUuYWRzZXJ2aWNlcy5zYW1wbGVzLmZsZWRnZS5zYW1wbGVhcA=="}'
 
 
 _GET_AD_SELECTION_DATA_EXPECTED_RESPONSE = json.loads(
     '{"buyerInput":{"interestGroups":[{"name":"winningCA","biddingSignalsKeys":["shoes","ba-buyer-5jyy5ulagq-uc.a.run.app","key1","key2"],"adRenderIds":["1"],"userBiddingSignals":"{}","origin":"com.example.adservices.samples.fledge.sampleapp"},{"name":"shirts_server","biddingSignalsKeys":["shoes","ba-buyer-5jyy5ulagq-uc.a.run.app","key1","key2"],"adRenderIds":["2"],"userBiddingSignals":"{}","origin":"com.example.adservices.samples.fledge.sampleapp"}]},"auctionSignals":"{}","buyerSignals":"{}","seller":"Placeholder-Should-Match-With-Seller-Origin-Domain-In-SFE-Config","publisherName":"Placeholder-Should-Match-With-App-Package-Name","enableDebugReporting":true,"consentedDebugConfig":{"isConsented":true,"token":"1234567890"},"protectedAppSignalsBuyerInput":{"protectedAppSignals":{}},"clientType":"CLIENT_TYPE_ANDROID","topLevelSeller":"Placeholder-Should-Match-With-Top-Level-Seller-Origin-Domain-In-SFE-Config","buyerKvExperimentGroupId":0,"enableUnlimitedEgress":true}'
+)
+_GET_AD_SELECTION_DATA_EXPECTED_RESPONSE_FOR_SELLER = json.loads(
+    '{"auction_config":{"seller_signals":"Replace-With-Seller-Signals","auction_signals":"Replace-With-Auction-Signals","buyer_list":["example.com"],"seller":"Replace-With-Seller","per_buyer_config":{"example.com":{"buyer_signals":"Replace-With-Buyer-Signals","auction_signals":"Replace-With-Auction-Signals"}}},"client_type":"CLIENT_TYPE_ANDROID","raw_protected_audience_input":{"raw_buyer_input":{"example.com":{"interest_groups":[{"name":"winningCA","origin":"com.example.adservices.samples.fledge.sampleapp","bidding_signals_keys":["shoes","example.com","key1","key2"],"ad_render_ids":["1"],"component_ads":[],"user_bidding_signals":"{}"},{"name":"shirts_server","origin":"com.example.adservices.samples.fledge.sampleapp","bidding_signals_keys":["shoes","example.com","key1","key2"],"ad_render_ids":["2"],"component_ads":[],"user_bidding_signals":"{}"}]}},"publisher_name":"Placeholder-Should-Match-With-App-Package-Name","enable_debug_reporting":true,"generation_id":"-5656913770645225423","consented_debug_config":{"is_consented":false,"token":"","is_debug_info_in_response":false}}}'
+)
+_GET_AD_SELECTION_DATA_EXPECTED_RESPONSE_FOR_SELLER_EMPTY = json.loads(
+    '{"client_type":"CLIENT_TYPE_ANDROID","auction_config":{"seller_signals":"Replace-With-Seller-Signals","auction_signals":"Replace-With-Auction-Signals","buyer_list":[],"seller":"Replace-With-Seller","per_buyer_config":{}},"raw_protected_audience_input":{"raw_buyer_input":{},"publisher_name":"Placeholder-Should-Match-With-App-Package-Name","enable_debug_reporting":true,"generation_id":"-4756226646510855253","consented_debug_config":{"is_consented":false,"token":"","is_debug_info_in_response":false}}}'
 )
 
 _GET_AD_SELECTION_DATA_SHELL_CMD_NO_DATA_RESPONSE = (
@@ -153,6 +162,78 @@ class AdSelectionTest(absltest.TestCase):
     )
     json_output = json.loads(output)
     self.assertEqual(json_output, _GET_AD_SELECTION_DATA_EXPECTED_RESPONSE)
+
+  def test_get_ad_selection_data_happy_path_for_seller(self):
+    self.adb.set_shell_outputs(
+        [_GET_AD_SELECTION_DATA_SHELL_CMD_RESPONSE_FOR_SELLER]
+    )
+
+    output = self.ad_selection.get_ad_selection_data()
+
+    self.assertContainsSubset(
+        utilities.split_adb_command(ad_selection._COMMAND_PREFIX)
+        + [
+            ad_selection._GET_AD_SELECTION_DATA_COMMAND,
+        ],
+        self.adb.shell_calls[0],
+    )
+    print("output: ")
+    print(output)
+    json_output = json.loads(output)
+    self.assertEqual(
+        json_output, _GET_AD_SELECTION_DATA_EXPECTED_RESPONSE_FOR_SELLER
+    )
+
+  def test_get_ad_selection_data_happy_path_for_seller_empty(self):
+    self.adb.set_shell_outputs(
+        [_GET_AD_SELECTION_DATA_SHELL_CMD_RESPONSE_FOR_SELLER_EMPTY]
+    )
+
+    output = self.ad_selection.get_ad_selection_data()
+
+    self.assertContainsSubset(
+        utilities.split_adb_command(ad_selection._COMMAND_PREFIX)
+        + [
+            ad_selection._GET_AD_SELECTION_DATA_COMMAND,
+        ],
+        self.adb.shell_calls[0],
+    )
+    json_output = json.loads(output)
+    self.assertEqual(
+        json_output, _GET_AD_SELECTION_DATA_EXPECTED_RESPONSE_FOR_SELLER_EMPTY
+    )
+
+  def test_get_ad_selection_data_invalid_proto(self):
+    self.adb.set_shell_outputs(
+        [_GET_AD_SELECTION_DATA_SHELL_CMD_INVALID_PROTO_RESPONSE]
+    )
+
+    output = self.ad_selection.get_ad_selection_data(buyer="test-buyer")
+
+    self.assertStartsWith(output, ad_selection._FAILURE_TEMPLATE % "")
+    self.assertContainsSubset(
+        utilities.split_adb_command(ad_selection._COMMAND_PREFIX)
+        + [
+            ad_selection._GET_AD_SELECTION_DATA_COMMAND,
+        ],
+        self.adb.shell_calls[0],
+    )
+
+  def test_get_ad_selection_data_invalid_proto_seller(self):
+    self.adb.set_shell_outputs(
+        [_GET_AD_SELECTION_DATA_SHELL_CMD_INVALID_PROTO_RESPONSE]
+    )
+
+    output = self.ad_selection.get_ad_selection_data()
+
+    self.assertStartsWith(output, ad_selection._FAILURE_TEMPLATE % "")
+    self.assertContainsSubset(
+        utilities.split_adb_command(ad_selection._COMMAND_PREFIX)
+        + [
+            ad_selection._GET_AD_SELECTION_DATA_COMMAND,
+        ],
+        self.adb.shell_calls[0],
+    )
 
   def test_get_ad_selection_data_no_data_for_buyer(self):
     self.adb.set_shell_outputs(

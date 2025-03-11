@@ -15,9 +15,11 @@
 """Command for interacting with Protected Audience Ad Selection CLI Commands."""
 
 import base64
+import gzip
 import json
 
 from google.protobuf.json_format import MessageToJson
+from google.protobuf.message import DecodeError
 
 import adb
 import bidding_auction_servers_pb2
@@ -30,6 +32,7 @@ _CONSENTED_DEBUG_COMMAND_ENABLE_SECRET_DEBUG_TOKEN = "--secret-debug-token"
 _CONSENTED_DEBUG_COMMAND_ENABLE_EXPIRY_IN_HOURS = "--expires-in-hours"
 _CONSENTED_DEBUG_COMMAND_DISABLE = "disable"
 _CONSENTED_DEBUG_COMMAND_VIEW = "view"
+_FAILURE_TEMPLATE = "Failed to parse output: %s"
 _GET_AD_SELECTION_DATA_COMMAND = "get-ad-selection-data"
 _VIEW_AUCTION_RESULT_COMMAND = "view-auction-result"
 _ARG_BUYER = "--buyer"
@@ -118,11 +121,14 @@ class AdSelection:
         )
     )
 
-  def get_ad_selection_data(self, buyer: str) -> str:
-    """Prints the JSON formatted input for GetBids request to BuyerFrontEnd service.
+  def get_ad_selection_data(self, buyer: str = "") -> str:
+    """Prints the JSON formatted input for usage with secure_invoke.
 
     Args:
-      buyer: AdTech buyer.
+      buyer: AdTech buyer used to generate the payload to a BuyerFrontend
+        GetBids API. If omitted, then an "raw" SelectAdRequest will be returned
+        for usage with an SellerFrontend SelectAds API. Note that this only
+        works with secure_invoke.
 
     Returns:
       Textual output of get_ad_selection__data command.
@@ -132,18 +138,97 @@ class AdSelection:
             _COMMAND_PREFIX,
             _GET_AD_SELECTION_DATA_COMMAND,
             "",
-            {_ARG_BUYER: buyer},
+            {_ARG_BUYER: buyer} if buyer else {},
         )
     )
     try:
-      proto_json = json.loads(command_output)
+      proto_json = json.loads(command_output.replace("\n", ""))
       base64_decoded_str = base64.b64decode(proto_json.get("output_proto"))
-      return MessageToJson(
-          bidding_auction_servers_pb2.GetBidsRequest.GetBidsRawRequest.FromString(
+      if buyer:
+        print("Querying for buyer: " + buyer)
+        try:
+          message = bidding_auction_servers_pb2.GetBidsRequest.GetBidsRawRequest.FromString(
               base64_decoded_str
           )
-      )
-    except ValueError:
+          return MessageToJson(message)
+        except DecodeError as e:
+          return _FAILURE_TEMPLATE % e
+      else:
+        print("Querying for seller")
+        try:
+          auction_input = (
+              bidding_auction_servers_pb2.ProtectedAuctionInput.FromString(
+                  base64_decoded_str
+              )
+          )
+        except DecodeError as e:
+          return _FAILURE_TEMPLATE % e
+        decompressed_buyer_inputs = {}
+        for buyer, compressed_buyer_input in auction_input.buyer_input.items():
+          buyer_input_bytes = gzip.decompress(compressed_buyer_input)
+          buyer_input = bidding_auction_servers_pb2.BuyerInput.FromString(
+              buyer_input_bytes
+          )
+          interest_groups = []
+          for interest_group in buyer_input.interest_groups:
+            interest_groups.append({
+                "name": interest_group.name,
+                "origin": interest_group.origin,
+                "bidding_signals_keys": list(
+                    interest_group.bidding_signals_keys
+                ),
+                "ad_render_ids": list(interest_group.ad_render_ids),
+                "component_ads": list(interest_group.component_ads),
+                "user_bidding_signals": interest_group.user_bidding_signals,
+            })
+          raw_buyer_input = {
+              "interest_groups": interest_groups,
+          }
+          if buyer_input.protected_app_signals.app_install_signals:
+            raw_buyer_input["protected_app_signals"] = {
+                "app_install_signals": base64.b64encode(
+                    buyer_input.protected_app_signals.app_install_signals
+                    or "{}"
+                ).decode("utf-8"),
+                "encoding_version": (
+                    buyer_input.protected_app_signals.encoding_version
+                ),
+            }
+          decompressed_buyer_inputs[buyer] = raw_buyer_input
+        empty_per_buyer_config = {}
+        for buyer in decompressed_buyer_inputs:
+          empty_per_buyer_config[buyer] = {
+              "buyer_signals": "Replace-With-Buyer-Signals",
+              "auction_signals": "Replace-With-Auction-Signals",
+          }
+        return json.dumps({
+            "auction_config": {
+                "seller_signals": "Replace-With-Seller-Signals",
+                "auction_signals": "Replace-With-Auction-Signals",
+                "buyer_list": list(decompressed_buyer_inputs.keys()),
+                "seller": "Replace-With-Seller",
+                "per_buyer_config": empty_per_buyer_config,
+            },
+            "client_type": "CLIENT_TYPE_ANDROID",
+            "raw_protected_audience_input": {
+                "raw_buyer_input": decompressed_buyer_inputs,
+                "publisher_name": auction_input.publisher_name,
+                "enable_debug_reporting": auction_input.enable_debug_reporting,
+                "generation_id": auction_input.generation_id,
+                "consented_debug_config": {
+                    "is_consented": (
+                        auction_input.consented_debug_config.is_consented
+                    ),
+                    "token": auction_input.consented_debug_config.token,
+                    "is_debug_info_in_response": (
+                        auction_input.consented_debug_config.is_debug_info_in_response
+                    ),
+                },
+            },
+        })
+
+    except ValueError as e:
+      print("Failed to parse output: %s" % e)
       return command_output
 
   def view_auction_result(self, ad_selection_id: str) -> str:
