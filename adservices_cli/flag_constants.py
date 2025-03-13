@@ -49,6 +49,11 @@ FEATURE_NAMES = [
     KANON,
     ON_DEVICE_AUCTION_V3,
 ]
+FEATURES_WITH_DISABLED_JS_CACHING = [
+    FEATURE_ALL,
+    ON_DEVICE_AUCTION,
+    ON_DEVICE_AUCTION_V3,
+]
 ## AdServices feature flags
 ### AdServices
 _ENABLE_ADSERVICES_SYSTEM_SERVICE = "adservice_system_service_enabled"
@@ -76,6 +81,7 @@ ENABLE_ALL_CUSTOM_AUDIENCE_FEATURE_FLAGS = [
 
 ### On Device Auction
 AD_SELECTION_BIDDING_LOGIC_V3 = "fledge_ad_selection_bidding_logic_js_version"
+ENABLE_HTTP_CACHE_JS_CACHING = "fledge_http_cache_enable_js_caching"
 _ENABLE_AD_SELECTION_PREBUILT_URI = (
     "fledge_ad_selection_ad_selection_prebuilt_uri_enabled"
 )
@@ -86,13 +92,11 @@ _ENABLE_EVENT_LEVEL_DEBUG_REPORT_SEND_IMMEDIATELY = (
     "fledge_event_level_debug_report_send_immediately"
 )
 _ENABLE_CONTEXTUAL_ADS_FILTER = "fledge_ad_selection_contextual_ads_enabled"
-_ENABLE_HTTP_CACHE_ENABLE_JS_CACHING = "fledge_http_cache_enable_js_caching"
 ENABLE_ALL_ON_DEVICE_AD_SELECTION_FLAGS = [
     _ENABLE_AD_SELECTION_PREBUILT_URI,
     _ENABLE_EVENT_LEVEL_DEBUG_REPORTING,
     _ENABLE_EVENT_LEVEL_DEBUG_REPORT_SEND_IMMEDIATELY,
     _ENABLE_CONTEXTUAL_ADS_FILTER,
-    _ENABLE_HTTP_CACHE_ENABLE_JS_CACHING,
 ]
 
 ### Server auctions

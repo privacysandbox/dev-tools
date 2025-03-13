@@ -30,7 +30,6 @@ class AdServices:
   """Privacy Sandbox for Android CLI (http://g.co/privacysandbox)."""
 
   _ADSERVICES_SYSTEM_PROPERTIES_NAMESPACE = "debug.adservices"
-  _ADSERVICES_DEVICE_CONFIG_NAMESPACE = "adservices"
   _ADSERVICES_PACKAGE = "com.google.android.adservices"
   _ADSERVICES_DOCS_URL = (
       "https://developer.android.com/design-for-safety/privacy-sandbox"
@@ -263,6 +262,11 @@ class AdServices:
     else:
       self._enable_feature(feature_name, flag_value)
 
+    if feature_name in flag_constants.FEATURES_WITH_DISABLED_JS_CACHING:
+      self._put_adservices_device_config(
+          flag_constants.ENABLE_HTTP_CACHE_JS_CACHING, kill_switch_value
+      )
+
     if feature_name == flag_constants.ON_DEVICE_AUCTION_V3:
       bidding_logic_js_version = "3" if enabled else "2"
       self._put_adservices_device_config(
@@ -293,12 +297,12 @@ class AdServices:
 
   def _get_adservices_device_config(self, key: str, silent: bool = True) -> str:
     return self.adb.get_device_config(
-        self._ADSERVICES_DEVICE_CONFIG_NAMESPACE, key, silent
+        constants.ADSERVICES_DEVICE_CONFIG_NAMESPACE, key, silent
     )
 
   def _put_adservices_device_config(self, key: str, value: str):
     self.adb.put_device_config(
-        self._ADSERVICES_DEVICE_CONFIG_NAMESPACE, key, value, silent=False
+        constants.ADSERVICES_DEVICE_CONFIG_NAMESPACE, key, value, silent=False
     )
 
   def _get_adservices_sys_prop(self, key: str, silent: bool = True) -> str:
